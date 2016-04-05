@@ -1,0 +1,45 @@
+<html>
+<head>
+<style>
+@import url(https://fonts.googleapis.com/css?family=Orbitron:700);
+
+#universe {
+   background-color: black;
+}
+</style>
+</head>
+<body>
+<canvas id="universe" width="1000" height="1000">
+</canvas>
+<script type="text/javascript" src="/static/zepto.min.js"></script>
+<script>
+   var canvas = document.getElementById('universe');
+   var ctx = canvas.getContext('2d');
+
+   ctx.font = "10px Orbitron";
+   ctx.textAlign = "center";
+
+   $.ajax({
+      type: 'GET',
+      url: '/data/',
+      dataType: 'json',
+      success: function(answer){
+         for (let p of answer.planets) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, 2*Math.PI, false);
+            ctx.fillStyle = '#0f0';
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#fff';
+            ctx.stroke();
+            ctx.fillStyle = "white";
+            ctx.fillText(p.name,p.x,p.y+p.r+20);
+         }
+      },
+      error: function(xhr, type){
+         console.log('Ajax error: GET /data/');
+      }
+   });
+</script>
+</body>
+</html>
