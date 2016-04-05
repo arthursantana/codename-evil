@@ -2,37 +2,19 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
-
-type Planet struct {
-	name string
-	x, y int
-	r    int
-}
-
-func (p *Planet) randomize() {
-	bigString := "akdfya87w36c4iungt2673tc5unyedc7g2j97sa6ged7f6cnrgnydgf7awgcj57g62cnybfubwhe897r6gc7c63k84r"
-	pos := rand.Intn(65)
-	p.name = bigString[pos : pos+rand.Intn(10)+5]
-
-	p.x = 100 + rand.Intn(800)
-	p.y = 100 + rand.Intn(800)
-	p.r = 5 + rand.Intn(50)
-}
-
-type Player struct {
-	name  string
-	color string
-}
 
 func main() {
 	var (
-		nPlanets = flag.Int("planets", 10, "number of planets")
-		nPlayers = flag.Int("players", 1, "number of players")
+		nPlanets       = flag.Int("planets", 10, "number of planets")
+		nPlayers       = flag.Int("players", 1, "number of players")
+		lastTick int64 = 0
 	)
 
 	flag.Parse()
@@ -40,39 +22,73 @@ func main() {
 	// VALIDATE NUMBERS HERE
 	// END
 
-	//fmt.Printf("%d players in %d planets\n", *nPlayers, *nPlanets)
-
-	planets := make([]Planet, *nPlanets)
 	players := make([]Player, *nPlayers)
-	_ = players
+	planets := make([]Planet, *nPlanets+*nPlayers)
 
 	// GENERATE RANDOM STUFF
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	for i := 0; i < *nPlanets; i++ {
+	for i := 0; i < len(planets); i++ {
 		planets[i].randomize()
+	}
+
+	for i := 0; i < len(players); i++ {
+		players[i].randomize()
+		planets[i].OwnerId = i
 	}
 
 	// SERVE
 	fs := http.FileServer(http.Dir("static"))
 	fsHandler := http.StripPrefix("/static/", fs)
-
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		fsHandler.ServeHTTP(w, r)
 	})
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/static/index.htm", http.StatusMovedPermanently)
 	})
-	http.HandleFunc("/data/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "{\"planets\": [")
-		separator := ""
-		for i := 0; i < *nPlanets; i++ {
-			p := planets[i]
-			fmt.Fprintf(w, "%v{\n\"name\": \"%v\",\n\"r\": %v,\n\"x\": %v,\n\"y\": %v\n}", separator, p.name, p.r, p.x, p.y)
-			separator = ",\n"
-		}
-		fmt.Fprintf(w, "]}")
+
+	http.HandleFunc("/planets/", func(w http.ResponseWriter, r *http.Request) {
+		planetsJSON(w, planets)
+	})
+	http.HandleFunc("/players/", func(w http.ResponseWriter, r *http.Request) {
+		playersJSON(w, players)
 	})
 
-	http.ListenAndServe(":8085", nil)
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin:     func(r *http.Request) bool { return true },
+	}
+	http.HandleFunc("/ws/", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+
+		var lastConnTick int64 = 0
+
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		for {
+			if lastConnTick < lastTick {
+				if err = conn.WriteMessage(websocket.TextMessage, []byte("reload")); err != nil {
+					log.Println(err)
+					return
+				}
+				lastConnTick = lastTick
+			} else {
+				time.Sleep(2 * time.Millisecond)
+			}
+		}
+	})
+
+	go func() {
+		for {
+			time.Sleep(8 * time.Millisecond)
+			tick(players, planets)
+			lastTick = time.Now().UTC().UnixNano()
+		}
+	}()
+
+	http.ListenAndServe(":8081", nil)
 }

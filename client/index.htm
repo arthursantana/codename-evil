@@ -11,35 +11,73 @@
 <body>
 <canvas id="universe" width="1000" height="1000">
 </canvas>
-<script type="text/javascript" src="/static/zepto.min.js"></script>
+<script type="text/javascript" src="/static/js/zepto.min.js"></script>
 <script>
    var canvas = document.getElementById('universe');
    var ctx = canvas.getContext('2d');
-
    ctx.font = "10px Orbitron";
    ctx.textAlign = "center";
 
-   $.ajax({
-      type: 'GET',
-      url: '/data/',
-      dataType: 'json',
-      success: function(answer){
-         for (let p of answer.planets) {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, 2*Math.PI, false);
-            ctx.fillStyle = '#0f0';
-            ctx.fill();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = '#fff';
-            ctx.stroke();
-            ctx.fillStyle = "white";
-            ctx.fillText(p.name,p.x,p.y+p.r+20);
-         }
-      },
-      error: function(xhr, type){
-         console.log('Ajax error: GET /data/');
+   var players;
+   var planets;
+
+   function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let p of planets) {
+         ctx.beginPath();
+         ctx.arc(p.x, p.y, p.r, 0, 2*Math.PI, false);
+         if (p.ownerId == -1)
+            ctx.fillStyle = '#ccc';
+         else
+            ctx.fillStyle = players[p.ownerId].color;
+         ctx.fill();
+         ctx.lineWidth = 2;
+         ctx.strokeStyle = '#fff';
+         ctx.stroke();
+         ctx.fillStyle = "white";
+         ctx.fillText(p.name,p.x,p.y+p.r+20);
       }
-   });
+   }
+
+   function getData() {
+      $.ajax({
+         type: 'GET',
+         url: '/players/',
+         dataType: 'json',
+         success: function(answer){
+            players = answer.players;
+         },
+         error: function(xhr, type){
+            console.log('Ajax error: GET /players/');
+         }
+      });
+
+      $.ajax({
+         type: 'GET',
+         url: '/planets/',
+         dataType: 'json',
+         success: function(answer){
+            planets = answer.planets;
+         },
+         error: function(xhr, type){
+            console.log('Ajax error: GET /planets/');
+         }
+      });
+   }
+
+   var s = new WebSocket("ws://192.168.0.21:8081/ws/");
+
+   s.onopen = function (event) {
+      s.send("mensagem"); 
+   };
+
+   s.onmessage = function (event) {
+      getData();
+   };
+
+   setInterval(render, 8);
+
 </script>
 </body>
 </html>
