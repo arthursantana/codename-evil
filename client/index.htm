@@ -24,7 +24,9 @@
    function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      for (let p of planets) {
+      for (var i = 0; i < planets.length; i++) {
+         var p = planets[i];
+
          ctx.beginPath();
          ctx.arc(p.x, p.y, p.r, 0, 2*Math.PI, false);
          if (p.ownerId == -1)
@@ -66,7 +68,7 @@
       });
    }
 
-   var s = new WebSocket("ws://192.168.0.21:8081/ws/");
+   var s = new WebSocket("ws://127.0.0.1:8081/ws/");
 
    s.onopen = function (event) {
       s.send("mensagem"); 
@@ -76,7 +78,7 @@
       getData();
    };
 
-   setInterval(render, 8);
+   setInterval(render, 16);
 
 </script>
 </body>

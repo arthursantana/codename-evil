@@ -77,14 +77,14 @@ func main() {
 				}
 				lastConnTick = lastTick
 			} else {
-				time.Sleep(2 * time.Millisecond)
+				time.Sleep(30 * time.Millisecond)
 			}
 		}
 	})
 
 	go func() {
 		for {
-			time.Sleep(8 * time.Millisecond)
+			time.Sleep(30 * time.Millisecond)
 			tick(players, planets)
 			lastTick = time.Now().UTC().UnixNano()
 		}
