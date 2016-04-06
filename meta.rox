@@ -1,8 +1,9 @@
 # FALTA
-! evitar concorrência nos ticks (usar canais como mutex)
+- evitar concorrência nos ticks (usar canais como mutex)
 - makefile
    - server ser linkado no .go
    - go get github.com/gorilla/websocket
+- autenticação decente
 
 # axiomas
 - cretino
