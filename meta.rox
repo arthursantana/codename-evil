@@ -2,6 +2,8 @@
 - makefile
    - server ser soft-linkado no .go
    - go get github.com/gorilla/websocket
+! refactor/cleanup
+   ! gambi do ___reconnect___
 - evitar concorrência nos ticks (usar canais como mutex)
 - autenticação decente: JWT?
 - implementar CheckOrigin

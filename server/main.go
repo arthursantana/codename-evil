@@ -91,21 +91,28 @@ func main() {
 			} else if playerId == -1 { // try to register player
 				answer := ""
 
-				if len(players) >= len(planets) {
-					answer = "server full"
-				} else {
-					// FALTA EVITAR CONCORRÊNCIA AQUI
-					p := Player{}
-					json.Unmarshal(message, &p)
-					log.Printf("New player: %v (%v)\n", p.Name, p.Color)
+				p := Player{}
+				json.Unmarshal(message, &p)
+				log.Printf("New player attempt: %v (%v)\n", p.Name, p.Color)
 
-					playerId = len(players)
-					players = append(players, p)
-					planets[playerId].OwnerId = playerId
+				if p.Name == "___reconnect___" {
+					playerId, _ = strconv.Atoi(p.Color[1:]) // BWAHAHAHA
 					answer = strconv.Itoa(playerId)
+				} else {
+					if len(players) >= len(planets) {
+						answer = "server full"
+						log.Printf("Server full.\n")
+					} else {
+						// FALTA EVITAR CONCORRÊNCIA AQUI
+						log.Printf("Ok.\n")
+						playerId = len(players)
+						players = append(players, p)
+						planets[playerId].OwnerId = playerId
+						answer = strconv.Itoa(playerId)
+					}
 				}
 
-				log.Println(string(answer))
+				//log.Println(string(answer))
 				if err = conn.WriteMessage(websocket.TextMessage, []byte(answer)); err != nil {
 					log.Println(err)
 					return

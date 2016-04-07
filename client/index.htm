@@ -5,13 +5,12 @@
 
 body {
    text-align: center;
-   background-color: #333;
+   background-color: black;
 }
 
 #universe {
    background-color: black;
    margin-top: 1em;
-   box-shadow: 0 0 5px 10px #555;
 }
 </style>
 </head>
@@ -24,7 +23,6 @@ body {
    var ctx = canvas.getContext('2d');
    ctx.font = "10px Orbitron";
    ctx.textAlign = "center";
-   var eu = null;
 
    var players;
    var planets;
@@ -106,18 +104,27 @@ body {
    var s = new WebSocket("ws://192.168.0.21:8081/ws/");
 
    s.onopen = function (event) {
-      var player = {
-         name: prompt("Name:", "Alf"),
-         color: prompt("color:", "#00ff00")
-      }
+      if (document.cookie == null || document.cookie == 0) {
+         var player = {
+            name: prompt("Name:", "Alf"),
+            color: prompt("Color:", "#00ff00")
+         }
 
-      s.send(JSON.stringify(player)); 
+         s.send(JSON.stringify(player)); 
+      } else {
+         s.send(JSON.stringify({
+                     name: "___reconnect___",
+                     color: document.cookie
+                  })); 
+      }
 
       s.onmessage = function (event) {
          if (event.data == 'tick') {
             getData();
          }
-         else eu = event.data;
+         else { // stores registered userId
+            document.cookie = "#" + event.data;
+         }
       };
 
       setInterval(render, 16);
@@ -135,7 +142,7 @@ canvas.addEventListener('click',
             r = planets[i].r
             if (dx*dx + dy*dy < r*r) {
                s.send(JSON.stringify(planets[i].id)); 
-               if (r <= 5 && planets[i].ownerId == eu) {
+               if (r <= 5 && planets[i].ownerId == document.cookie.substring(1, document.cookie.length)) {
                   alert("GANHOU, PORRA");
                }
                return;
