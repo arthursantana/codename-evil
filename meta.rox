@@ -1,15 +1,17 @@
 # FALTA
-- evitar concorrência nos ticks (usar canais como mutex)
 - makefile
-   - server ser linkado no .go
+   - server ser soft-linkado no .go
    - go get github.com/gorilla/websocket
-- autenticação decente
+- evitar concorrência nos ticks (usar canais como mutex)
+- autenticação decente: JWT?
+- implementar CheckOrigin
+- não enviar pela API dados a que o jogador não tem acesso
 
 # axiomas
-- cretino
-- mais ícones + menos texto = mais o chinês joga
 - mundo persistente, coisas colecionáveis, números que sobem
 - inicialmente browser-based {gladiatus}
 - free to play, micropayments de variedade/estética/possivelmente vantagens? {lol}
 - viral através de sacanagens sociais {candy crush}
 - mínimo de arte
+- cretino
+- mais ícones + menos texto = mais o chinês joga

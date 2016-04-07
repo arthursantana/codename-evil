@@ -4,17 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math"
 	"math/rand"
 	"net/http"
 )
 
 type Planet struct {
-	Name    string  `json:"name"`
-	X       float64 `json:"x"`
-	Y       float64 `json:"y"`
-	R       int     `json:"r"`
-	OwnerId int     `json:"ownerId"`
+	Id       int        `json:"id"`
+	Name     string     `json:"name"`
+	Position [3]float64 `json:"position"`
+	R        float64    `json:"r"`
+	OwnerId  int        `json:"ownerId"`
 }
 
 func (p *Planet) randomize() {
@@ -22,19 +21,12 @@ func (p *Planet) randomize() {
 	pos := rand.Intn(65)
 	p.Name = bigString[pos : pos+rand.Intn(10)+5]
 
-	p.X = 100 + float64(rand.Intn(800))
-	p.Y = 100 + float64(rand.Intn(800))
-	p.R = 5 + rand.Intn(50)
+	p.Position[0] = 100 + float64(rand.Intn(800))
+	p.Position[1] = 100 + float64(rand.Intn(800))
+	p.Position[2] = 100 + float64(rand.Intn(800))
+	p.R = 5 + float64(rand.Intn(50))
 
 	p.OwnerId = -1
-}
-
-func (p *Planet) rotate(angle float64) {
-	x := p.X - 500
-	y := p.Y - 500
-
-	p.X = x*math.Cos(angle) - y*math.Sin(angle) + 500
-	p.Y = x*math.Sin(angle) + y*math.Cos(angle) + 500
 }
 
 func planetsJSON(w http.ResponseWriter, planets []Planet) {

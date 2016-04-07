@@ -3,8 +3,15 @@
 <style>
 @import url(https://fonts.googleapis.com/css?family=Orbitron:700);
 
+body {
+   text-align: center;
+   background-color: #333;
+}
+
 #universe {
    background-color: black;
+   margin-top: 1em;
+   box-shadow: 0 0 5px 10px #555;
 }
 </style>
 </head>
@@ -17,6 +24,7 @@
    var ctx = canvas.getContext('2d');
    ctx.font = "10px Orbitron";
    ctx.textAlign = "center";
+   var eu = null;
 
    var players;
    var planets;
@@ -24,11 +32,13 @@
    function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      if (planets == null) return;
+
       for (var i = 0; i < planets.length; i++) {
          var p = planets[i];
 
          ctx.beginPath();
-         ctx.arc(p.x, p.y, p.r, 0, 2*Math.PI, false);
+         ctx.arc(p.position[0], p.position[1], p.r, 0, 2*Math.PI, false);
          if (p.ownerId == -1)
             ctx.fillStyle = '#ccc';
          else
@@ -38,11 +48,18 @@
          ctx.strokeStyle = '#fff';
          ctx.stroke();
          ctx.fillStyle = "white";
-         ctx.fillText(p.name,p.x,p.y+p.r+20);
+         if (p.ownerId == -1)
+            ctx.fillText(p.name,p.position[0],p.position[1]+p.r+20);
+         else
+            ctx.fillText(players[p.ownerId].name,p.position[0],p.position[1]+p.r+20);
       }
    }
 
    function getData() {
+      maxZ = 1000;
+      scaler = 1/5;
+      k = 8; // perspective hack constant
+
       $.ajax({
          type: 'GET',
          url: '/players/',
@@ -60,6 +77,24 @@
          url: '/planets/',
          dataType: 'json',
          success: function(answer){
+            answer.planets.sort(
+                  function (a, b) {
+                     return a.position[2] > b.position[2];
+                  });
+
+            for (var i = 0; i < answer.planets.length; i++) {
+               var p = answer.planets[i];
+
+               r = scaler * ((maxZ-1)*p.r/k + k*p.r*p.position[2])/maxZ;
+               x = p.position[2]*(p.position[0] - 500)/maxZ + 500;
+               y = p.position[2]*(p.position[1] - 500)/maxZ + 500;
+               if (r <= 0) r = 1;
+
+               p.position[0] = x;
+               p.position[1] = y;
+               p.r = r;
+            }
+
             planets = answer.planets;
          },
          error: function(xhr, type){
@@ -68,17 +103,45 @@
       });
    }
 
-   var s = new WebSocket("ws://127.0.0.1:8081/ws/");
+   var s = new WebSocket("ws://192.168.0.21:8081/ws/");
 
    s.onopen = function (event) {
-      s.send("mensagem"); 
+      var player = {
+         name: prompt("Name:", "Alf"),
+         color: prompt("color:", "#00ff00")
+      }
+
+      s.send(JSON.stringify(player)); 
+
+      s.onmessage = function (event) {
+         if (event.data == 'tick') {
+            getData();
+         }
+         else eu = event.data;
+      };
+
+      setInterval(render, 16);
    };
 
-   s.onmessage = function (event) {
-      getData();
-   };
+canvas.addEventListener('click',
+      function (event) {
+         x = event.pageX - canvas.offsetLeft;
+         y = event.pageY - canvas.offsetTop;
 
-   setInterval(render, 16);
+         while (planets == null); // wait for data
+         for (var i = planets.length - 1; i >= 0; i--) {
+            dx = x-planets[i].position[0];
+            dy = y-planets[i].position[1];
+            r = planets[i].r
+            if (dx*dx + dy*dy < r*r) {
+               s.send(JSON.stringify(planets[i].id)); 
+               if (r <= 5 && planets[i].ownerId == eu) {
+                  alert("GANHOU, PORRA");
+               }
+               return;
+            }
+         }
+      }, false);
 
 </script>
 </body>

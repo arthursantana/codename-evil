@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -13,7 +15,7 @@ import (
 func main() {
 	var (
 		nPlanets       = flag.Int("planets", 10, "number of planets")
-		nPlayers       = flag.Int("players", 1, "number of players")
+		speed          = flag.Float64("speed", 10, "speed")
 		lastTick int64 = 0
 	)
 
@@ -22,19 +24,15 @@ func main() {
 	// VALIDATE NUMBERS HERE
 	// END
 
-	players := make([]Player, *nPlayers)
-	planets := make([]Planet, *nPlanets+*nPlayers)
+	planets := make([]Planet, *nPlanets)
+	players := make([]Player, 0)
 
 	// GENERATE RANDOM STUFF
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	for i := 0; i < len(planets); i++ {
 		planets[i].randomize()
-	}
-
-	for i := 0; i < len(players); i++ {
-		players[i].randomize()
-		planets[i].OwnerId = i
+		planets[i].Id = i
 	}
 
 	// SERVE
@@ -69,15 +67,68 @@ func main() {
 			return
 		}
 
+		go func() {
+			for {
+				if lastConnTick < lastTick {
+					if err = conn.WriteMessage(websocket.TextMessage, []byte("tick")); err != nil {
+						log.Println(err)
+						return
+					}
+					lastConnTick = lastTick
+				} else {
+					time.Sleep(8 * time.Millisecond)
+				}
+			}
+		}()
+
+		playerId := -1
+
 		for {
-			if lastConnTick < lastTick {
-				if err = conn.WriteMessage(websocket.TextMessage, []byte("reload")); err != nil {
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				log.Println(err)
+				return
+			} else if playerId == -1 { // try to register player
+				answer := ""
+
+				if len(players) >= len(planets) {
+					answer = "server full"
+				} else {
+					// FALTA EVITAR CONCORRÊNCIA AQUI
+					p := Player{}
+					json.Unmarshal(message, &p)
+					log.Printf("New player: %v (%v)\n", p.Name, p.Color)
+
+					playerId = len(players)
+					players = append(players, p)
+					planets[playerId].OwnerId = playerId
+					answer = strconv.Itoa(playerId)
+				}
+
+				log.Println(string(answer))
+				if err = conn.WriteMessage(websocket.TextMessage, []byte(answer)); err != nil {
 					log.Println(err)
 					return
 				}
-				lastConnTick = lastTick
-			} else {
-				time.Sleep(8 * time.Millisecond)
+			} else { // planet was clicked
+				planetId, err := strconv.Atoi(string(message))
+				if err != nil {
+					log.Println(err)
+				} else {
+					p := &planets[planetId]
+
+					if p.OwnerId != -1 {
+						p.R -= 2
+						if p.R < 0 {
+							p.R = 0.5
+						}
+					} else {
+						p.R += 2
+						if p.R > 150 {
+							p.R = 150
+						}
+					}
+				}
 			}
 		}
 	})
@@ -85,7 +136,7 @@ func main() {
 	go func() {
 		for {
 			time.Sleep(16 * time.Millisecond)
-			tick(players, planets)
+			tick(players, planets, *speed)
 			lastTick = time.Now().UTC().UnixNano()
 		}
 	}()
