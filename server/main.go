@@ -125,7 +125,7 @@ func main() {
 					} else {
 						p.R += 2
 						if p.R > 150 {
-							p.R = 150
+							p.R = 1
 						}
 					}
 				}
