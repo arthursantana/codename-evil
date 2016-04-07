@@ -56,7 +56,7 @@ body {
    function getData() {
       maxZ = 1000;
       scaler = 1/5;
-      k = 8; // perspective hack constant
+      k = 4; // perspective hack constant
 
       $.ajax({
          type: 'GET',
@@ -86,7 +86,7 @@ body {
                r = scaler * ((maxZ-1)*p.r/k + k*p.r*p.position[2])/maxZ;
                x = p.position[2]*(p.position[0] - 500)/maxZ + 500;
                y = p.position[2]*(p.position[1] - 500)/maxZ + 500;
-               if (r <= 0) r = 1;
+               if (r <= 0) r = 0;
 
                p.position[0] = x;
                p.position[1] = y;
