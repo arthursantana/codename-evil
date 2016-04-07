@@ -32,4 +32,8 @@ func (p *Planet) rotate(ax, ay, az float64) {
 	p.rotateX(ax)
 	p.rotateY(ay)
 	p.rotateZ(az)
+
+	if math.IsNaN(p.Position[0]) || math.IsNaN(p.Position[1]) || math.IsNaN(p.Position[2]) {
+		p.randomizePosition()
+	}
 }

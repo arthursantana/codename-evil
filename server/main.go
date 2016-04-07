@@ -12,10 +12,13 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var rotX, rotY, rotZ int
+var dirX, dirY, dirZ int
+
 func main() {
 	var (
 		nPlanets       = flag.Int("planets", 10, "number of planets")
-		speed          = flag.Float64("speed", 10, "speed")
+		speed          = flag.Float64("speed", 5, "speed")
 		lastTick int64 = 0
 	)
 
@@ -125,12 +128,15 @@ func main() {
 					p := &planets[planetId]
 
 					if p.OwnerId != -1 {
-						p.R -= 2
-						if p.R < 0 {
-							p.R = 0.5
+						p.R -= 10
+						if p.R < 10 {
+							p.randomizePosition()
+							p.randomizeRadius()
+
+							players[p.OwnerId].Points++
 						}
 					} else {
-						p.R += 2
+						p.R += 20
 						if p.R > 150 {
 							p.R = 1
 						}
@@ -139,6 +145,13 @@ func main() {
 			}
 		}
 	})
+
+	rotX = 2000
+	rotY = 2000
+	rotZ = 2000
+	dirX = 1
+	dirY = 1
+	dirZ = 1
 
 	go func() {
 		for {

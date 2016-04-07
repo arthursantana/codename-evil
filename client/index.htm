@@ -21,7 +21,6 @@ body {
 <script>
    var canvas = document.getElementById('universe');
    var ctx = canvas.getContext('2d');
-   ctx.font = "10px Orbitron";
    ctx.textAlign = "center";
 
    var players;
@@ -32,6 +31,7 @@ body {
 
       if (planets == null) return;
 
+      ctx.font = "10px Orbitron";
       for (var i = 0; i < planets.length; i++) {
          var p = planets[i];
 
@@ -41,15 +41,24 @@ body {
             ctx.fillStyle = '#ccc';
          else
             ctx.fillStyle = players[p.ownerId].color;
-         ctx.fill();
          ctx.lineWidth = 2;
          ctx.strokeStyle = '#fff';
          ctx.stroke();
+         ctx.fill();
          ctx.fillStyle = "white";
          if (p.ownerId == -1)
             ctx.fillText(p.name,p.position[0],p.position[1]+p.r+20);
          else
             ctx.fillText(players[p.ownerId].name,p.position[0],p.position[1]+p.r+20);
+      }
+
+      if (players == null) return;
+
+      ctx.font = "20px Orbitron";
+      ctx.textAlign = "left";
+      for (var i = 0; i < players.length; i++) {
+         ctx.fillStyle = players[i].color;
+         ctx.fillText(players[i].name + ": " + players[i].points,30,30 + 40*i);
       }
    }
 
@@ -107,7 +116,8 @@ body {
       if (document.cookie == null || document.cookie == 0) {
          var player = {
             name: prompt("Name:", "Alf"),
-            color: prompt("Color:", "#00ff00")
+            color: prompt("Color:", "#00ff00"),
+            points: 0
          }
 
          s.send(JSON.stringify(player)); 
@@ -142,9 +152,6 @@ canvas.addEventListener('click',
             r = planets[i].r
             if (dx*dx + dy*dy < r*r) {
                s.send(JSON.stringify(planets[i].id)); 
-               if (r <= 5 && planets[i].ownerId == document.cookie.substring(1, document.cookie.length)) {
-                  alert("GANHOU, PORRA");
-               }
                return;
             }
          }

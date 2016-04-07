@@ -8,8 +8,9 @@ import (
 )
 
 type Player struct {
-	Name  string `json:"name"`
-	Color string `json:"color"`
+	Name   string `json:"name"`
+	Color  string `json:"color"`
+	Points int    `json:"points"`
 }
 
 func playersJSON(w http.ResponseWriter, players []Player) {

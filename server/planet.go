@@ -21,12 +21,20 @@ func (p *Planet) randomize() {
 	pos := rand.Intn(65)
 	p.Name = bigString[pos : pos+rand.Intn(10)+5]
 
+	p.randomizePosition()
+	p.randomizeRadius()
+
+	p.OwnerId = -1
+}
+
+func (p *Planet) randomizeRadius() {
+	p.R = 5 + float64(rand.Intn(100))
+}
+
+func (p *Planet) randomizePosition() {
 	p.Position[0] = 100 + float64(rand.Intn(800))
 	p.Position[1] = 100 + float64(rand.Intn(800))
 	p.Position[2] = 100 + float64(rand.Intn(800))
-	p.R = 5 + float64(rand.Intn(50))
-
-	p.OwnerId = -1
 }
 
 func planetsJSON(w http.ResponseWriter, planets []Planet) {
