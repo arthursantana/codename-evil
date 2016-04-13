@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8">
+   <style>
+
+body {
+   background: white;
+   width: 261px;
+   margin: 2em;
+}
+
+.box {
+   background: #0f0;
+   margin: 0;
+   padding: 0;
+   border-bottom: solid #080 1px;
+   border-left: solid #080 1px;
+}
+
+.box .box {
+   height: 65px;
+   border-bottom: none;
+   border-left: none;
+}
+
+.box .box .box {
+   border-top: solid #080 1px;
+   border-right: solid #080 1px;
+   width: 64px;
+   height: 64px;
+   display: inline-block;
+}
+
+.farm {
+   background-image: url("buildings/farm.png");
+}
+
+.generator {
+   background-image: url("buildings/generator.png");
+}
+
+.hq {
+   background-image: url("buildings/hq.png");
+}
+
+.nasa {
+   background-image: url("buildings/nasa.png");
+}
+
+.vale {
+   background-image: url("buildings/vale.png");
+}
+
+span {
+   height: 32px;
+   width: 32px;
+   display: inline-block;
+}
+
+.pop {
+   background-image: url("resources/pop.png");
+}
+
+.vaca {
+   background-image: url("resources/vaca.png");
+}
+
+.joules {
+   background-image: url("resources/joules.png");
+}
+
+.obtanium {
+   background-image: url("resources/obtanium.png");
+}
+
+.mappie {
+   float: left;
+   display: inline-block;
+}
+
+.res {
+   float: left;
+   display: inline-block;
+}
+
+   </style>
+</head>
+<body>
+   <div class="res">
+      <span class="pop"></span> 11324<br />
+      <span class="vaca"></span> 66213<br />
+      <span class="joules"></span> 5312390<br />
+      <span class="obtanium"></span> 423
+   </div>
+
+   <div class="mappie">
+      <div class="box">
+         <div class="box">
+            <div class="box hq"></div><div class="box farm"></div><div class="box"></div><div class="box"></div>
+         </div>
+         <div class="box">
+            <div class="box nasa"></div><div class="box farm"></div><div class="box"></div><div class="box"></div>
+         </div>
+         <div class="box">
+            <div class="box farm"></div><div class="box farm"></div><div class="box vale"></div><div class="box generator"></div>
+         </div>
+         <div class="box">
+            <div class="box farm"></div><div class="box farm"></div><div class="box generator"></div><div class="box generator"></div>
+         </div>
+      </div>
+   </div>
+</body>
+</html>
