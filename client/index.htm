@@ -1,162 +1,26 @@
 <html>
-<head>
-<style>
-@import url(https://fonts.googleapis.com/css?family=Orbitron:700);
+   <head>
+   <meta name="viewport" content="user-scalable=no" />
+      <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+   </head>
 
-body {
-   text-align: center;
-   background-color: black;
-}
-
-#universe {
-   background-color: black;
-   margin-top: 1em;
-}
-</style>
-</head>
-<body>
-<canvas id="universe" width="1000" height="1000">
-</canvas>
-<script type="text/javascript" src="/static/js/zepto.min.js"></script>
-<script>
-   var canvas = document.getElementById('universe');
-   var ctx = canvas.getContext('2d');
-   ctx.textAlign = "center";
-
-   var players;
-   var planets;
-
-   function render() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      if (planets == null) return;
-
-      ctx.font = "10px Orbitron";
-      for (var i = 0; i < planets.length; i++) {
-         var p = planets[i];
-
-         ctx.beginPath();
-         ctx.arc(p.position[0], p.position[1], p.r, 0, 2*Math.PI, false);
-         if (p.ownerId == -1)
-            ctx.fillStyle = '#ccc';
-         else
-            ctx.fillStyle = players[p.ownerId].color;
-         ctx.lineWidth = 2;
-         ctx.strokeStyle = '#fff';
-         ctx.stroke();
-         ctx.fill();
-         ctx.fillStyle = "white";
-         if (p.ownerId == -1)
-            ctx.fillText(p.name,p.position[0],p.position[1]+p.r+20);
-         else
-            ctx.fillText(players[p.ownerId].name,p.position[0],p.position[1]+p.r+20);
-      }
-
-      if (players == null) return;
-
-      ctx.font = "20px Orbitron";
-      ctx.textAlign = "left";
-      for (var i = 0; i < players.length; i++) {
-         ctx.fillStyle = players[i].color;
-         ctx.fillText(players[i].name + ": " + players[i].points,30,30 + 40*i);
-      }
-   }
-
-   function getData() {
-      maxZ = 1000;
-      scaler = 1/5;
-      k = 4; // perspective hack constant
-
-      $.ajax({
-         type: 'GET',
-         url: '/players/',
-         dataType: 'json',
-         success: function(answer){
-            players = answer.players;
-         },
-         error: function(xhr, type){
-            console.log('Ajax error: GET /players/');
-         }
-      });
-
-      $.ajax({
-         type: 'GET',
-         url: '/planets/',
-         dataType: 'json',
-         success: function(answer){
-            answer.planets.sort(
-                  function (a, b) {
-                     return a.position[2] > b.position[2];
-                  });
-
-            for (var i = 0; i < answer.planets.length; i++) {
-               var p = answer.planets[i];
-
-               r = scaler * ((maxZ-1)*p.r/k + k*p.r*p.position[2])/maxZ;
-               x = p.position[2]*(p.position[0] - 500)/maxZ + 500;
-               y = p.position[2]*(p.position[1] - 500)/maxZ + 500;
-               if (r <= 0) r = 0;
-
-               p.position[0] = x;
-               p.position[1] = y;
-               p.r = r;
-            }
-
-            planets = answer.planets;
-         },
-         error: function(xhr, type){
-            console.log('Ajax error: GET /planets/');
-         }
-      });
-   }
-
-   var s = new WebSocket("ws://192.168.0.21:8081/ws/");
-
-   s.onopen = function (event) {
-      if (document.cookie == null || document.cookie == 0) {
-         var player = {
-            name: prompt("Name:", "Alf"),
-            color: prompt("Color:", "#00ff00"),
-            points: 0
-         }
-
-         s.send(JSON.stringify(player)); 
-      } else {
-         s.send(JSON.stringify({
-                     name: "___reconnect___",
-                     color: document.cookie
-                  })); 
-      }
-
-      s.onmessage = function (event) {
-         if (event.data == 'tick') {
-            getData();
-         }
-         else { // stores registered userId
-            document.cookie = "#" + event.data;
-         }
-      };
-
-      setInterval(render, 16);
-   };
-
-canvas.addEventListener('click',
-      function (event) {
-         x = event.pageX - canvas.offsetLeft;
-         y = event.pageY - canvas.offsetTop;
-
-         while (planets == null); // wait for data
-         for (var i = planets.length - 1; i >= 0; i--) {
-            dx = x-planets[i].position[0];
-            dy = y-planets[i].position[1];
-            r = planets[i].r
-            if (dx*dx + dy*dy < r*r) {
-               s.send(JSON.stringify(planets[i].id)); 
-               return;
-            }
-         }
-      }, false);
-
-</script>
-</body>
+   <body>
+      <div id="game">Loading...</div>
+      <!--
+      <script type="text/javascript" src="/static/js/zepto.min.js"></script>
+      <script type="text/javascript" src="/static/js/react.min.js"></script>
+      <script type="text/javascript" src="/static/js/react-dom.min.js"></script>
+      -->
+      <script type="text/javascript" src="/static/js/zepto.js"></script>
+      <script type="text/javascript" src="/static/js/react.js"></script>
+      <script type="text/javascript" src="/static/js/react-dom.js"></script>
+      <script type="text/javascript" src="/static/js/util.js"></script>
+      <script type="text/javascript" src="/static/js/starMap.js"></script>
+      <script type="text/javascript" src="/static/js/buildingInterface.js"></script>
+      <script type="text/javascript" src="/static/js/worldMap.js"></script>
+      <script type="text/javascript" src="/static/js/resourceList.js"></script>
+      <script type="text/javascript" src="/static/js/managementInterface.js"></script>
+      <script type="text/javascript" src="/static/js/game.js"></script>
+   </body>
 </html>

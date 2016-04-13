@@ -1,0 +1,167 @@
+@import url(https://fonts.googleapis.com/css?family=Orbitron:400,700);
+$font-family: 'Orbitron';
+
+body {
+   font-family: $font-family;
+   background-color: white;
+   color: white;
+   font-size: 20px;
+}
+
+.unselector {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(128,128,128,0.70);
+}
+
+#starMap {
+   background-color: rgba(5,5,5,0.95);
+   color: white;
+   box-shadow: 10px 10px 30px #555;
+   border-radius: 5px;
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   margin-top: -375px;
+   margin-left: -375px;
+   width: 750px;
+   height: 750px;
+   display: block;
+}
+
+@mixin modal {
+   background-color: rgba(20,20,20,0.95);
+   color: white;
+   box-shadow: 0 0 5px #555;
+   border-radius: 5px;
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   padding: 2em;
+}
+
+@mixin modal-large {
+   @include modal;
+
+   height:26em;
+   width:30em;
+   margin-top: -15em;
+   margin-left: -17em;
+}
+
+@mixin modal-small {
+   @include modal;
+
+   height:18em;
+   width:20em;
+   margin-top: -11em;
+   margin-left: -12em;
+}
+
+#managementInterface {
+   @include modal-large;
+
+   h2 {
+      margin: 0 0 0.3em 0;
+
+      span {
+         margin-right: 1em;
+      }
+
+      a {
+         cursor: pointer;
+         font-size: 0.8em;
+      }
+   }
+
+   #playerTag {
+      margin-bottom: 1em;
+
+      #playerColor {
+         width: 1em;
+         height: 1em;
+         display: inline-block;
+         margin: 0 1em 0 0;
+      }
+   }
+
+   #resourceList {
+      float: right;
+      text-align: right;
+
+      .resource {
+         height: 32px;
+         width: 32px;
+         margin-left: 1em;
+         display: inline-block;
+      }
+
+      .pop {
+         background-image: url("/static/img/pop.png");
+      }
+
+      .vaca {
+         background-image: url("/static/img/vaca.png");
+      }
+
+      .joules {
+         background-image: url("/static/img/joules.png");
+      }
+
+      .obtanium {
+         background-image: url("/static/img/obtanium.png");
+      }
+   }
+
+   #worldMap {
+      height: 264px;
+      width: 264px;
+      margin: 0;
+      padding: 0;
+
+      .row {
+         height: 65px;
+      }
+
+      .tile {
+         border: solid #555 1px;
+      }
+
+      .tile:hover {
+         border: solid #0f0 1px;
+      }
+   }
+
+   .tile {
+         width: 64px;
+         height: 65px;
+         display: inline-block;
+   }
+
+   .farm {
+      background-image: url("/static/img/farm.png");
+   }
+
+   .generator {
+      background-image: url("/static/img/generator.png");
+   }
+
+   .hq {
+      background-image: url("/static/img/hq.png");
+   }
+
+   .nasa {
+      background-image: url("/static/img/nasa.png");
+   }
+
+   .vale {
+      background-image: url("/static/img/vale.png");
+   }
+
+   #buildingInterface {
+      @include modal-small;
+   }
+}

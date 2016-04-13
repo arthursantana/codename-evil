@@ -1,9 +1,58 @@
+=== week 1: playing, brainstorming, basic design
+% play, brainstorm, basically design
+
+=== week 2: have it playable on desktop, with fun, somewhat fast matches (0.5-2h)
+   % makefile
+   % client refactor
+      % gulpfile and folder structure
+      % scss
+      % react instead of manually changing innerHTML
+   % use for testing (forms, communication, etc): allow changing the name of your planet
+   - design
+      - basic resources
+      - buildings
+      - building/item effects
+      - ship gameplay
+   - server refactor
+      - unhack communication: type answer
+         - ___reconnect___ hack: using color to send the id, yadda yadda
+      - forbid changing resources you don't own: planet name, buildings
+      - forbid building in built places
+      - check for errors when converting types and etc: grep _
+   - build interface
+   - basic buildings
+   - building effects
+   - ships
+      - interfaces
+      - effects
+      - owning new colonies
+         - easy "jump between my planets" button
+   - tidy up visuals
+      - decent font
+      - bootstrap
+      - background stars
+      - planet effects
+      - window effects: animated transitions, transparencies, etc
+   - run ok on mobile
+      - no pinch to zoom
+      - manifest
+         - full screen
+         - landscape
+
+=== week 3
+- refactor interface: has to be easy to manage all your planets and ships and whatever
+- content
+   - buildings
+   - ships
+   - items
+   - planet effects
+   - different races
+=== week 4
+- persist
+
 # FALTA
-- makefile
-   - server ser soft-linkado no .go
-   - go get github.com/gorilla/websocket
-! refactor/cleanup
-   ! gambi do ___reconnect___
+- bug ARGXYZ
+- refactor do canvas?
 - evitar concorrência nos ticks (usar canais como mutex)
 - autenticação decente: JWT?
 - implementar CheckOrigin
@@ -14,6 +63,6 @@
 - inicialmente browser-based {gladiatus}
 - free to play, micropayments de variedade/estética/possivelmente vantagens? {lol}
 - viral através de sacanagens sociais {candy crush}
-- mínimo de arte
+- mínimo de arte inicial
 - cretino
 - mais ícones + menos texto = mais o chinês joga

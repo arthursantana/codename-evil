@@ -14,9 +14,9 @@ type Player struct {
 }
 
 func playersJSON(w http.ResponseWriter, players []Player) {
-	fmt.Fprintf(w, "{\"players\": [")
+	fmt.Fprintf(w, "\"players\": [")
 	separator := ""
-	for i := 0; i < len(players); i++ {
+	for i := range players {
 		p := players[i]
 		pJson, err := json.Marshal(p)
 		if err != nil {
@@ -27,5 +27,5 @@ func playersJSON(w http.ResponseWriter, players []Player) {
 		fmt.Fprintf(w, "%v%v", separator, string(pJson))
 		separator = ",\n"
 	}
-	fmt.Fprintf(w, "]}")
+	fmt.Fprintf(w, "]")
 }

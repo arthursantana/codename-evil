@@ -7,9 +7,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "private": true,
+  "license": "UNLICENSED",
   "dependencies": {
     "gulp": "^3.8.11",
-    "gulp-watch": "~4.2.4"
+    "gulp-react": "^3.1.0",
+    "gulp-sass": "^2.2.0",
+    "gulp-uglify": "^1.5.3",
+    "gulp-watch": "~4.2.4",
+    "react": "^15.0.1",
+    "react-dom": "^15.0.1",
+    "zepto-full": "^1.1.4"
   }
 }

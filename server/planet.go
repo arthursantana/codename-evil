@@ -9,11 +9,20 @@ import (
 )
 
 type Planet struct {
-	Id       int        `json:"id"`
-	Name     string     `json:"name"`
-	Position [3]float64 `json:"position"`
-	R        float64    `json:"r"`
-	OwnerId  int        `json:"ownerId"`
+	Id      int    `json:"id"`
+	OwnerId int    `json:"ownerId"`
+	Name    string `json:"name"`
+
+	Position [2]float64 `json:"position"`
+	R        int        `json:"r"`
+
+	// resources
+	Population int `json:"population"`
+	Cattle     int `json:"cattle"`
+	Energy     int `json:"energy"`
+	Obtanium   int `json:"obtanium"`
+
+	Buildings [][]Building `json:"buildings"`
 }
 
 func (p *Planet) randomize() {
@@ -21,26 +30,32 @@ func (p *Planet) randomize() {
 	pos := rand.Intn(65)
 	p.Name = bigString[pos : pos+rand.Intn(10)+5]
 
-	p.randomizePosition()
-	p.randomizeRadius()
+	p.Position[0] = 100 + float64(rand.Intn(550))
+	p.Position[1] = 100 + float64(rand.Intn(550))
+	p.R = 4 //5 + float64(rand.Intn(5))
+
+	p.Population = 1000 + rand.Intn(100000)
+	p.Cattle = 1000 + rand.Intn(100000)
+	p.Energy = 1000 + rand.Intn(100000)
+	p.Obtanium = 1000 + rand.Intn(100000)
+
+	p.Buildings = make([][]Building, p.R)
+	for i := range p.Buildings {
+		p.Buildings[i] = make([]Building, p.R)
+
+		for j := range p.Buildings[i] {
+			p.Buildings[i][j] = Building{}
+		}
+
+	}
 
 	p.OwnerId = -1
 }
 
-func (p *Planet) randomizeRadius() {
-	p.R = 5 + float64(rand.Intn(100))
-}
-
-func (p *Planet) randomizePosition() {
-	p.Position[0] = 100 + float64(rand.Intn(800))
-	p.Position[1] = 100 + float64(rand.Intn(800))
-	p.Position[2] = 100 + float64(rand.Intn(800))
-}
-
 func planetsJSON(w http.ResponseWriter, planets []Planet) {
-	fmt.Fprintf(w, "{\"planets\": [")
+	fmt.Fprintf(w, "\"planets\": [")
 	separator := ""
-	for i := len(planets) - 1; i >= 0; i-- {
+	for i := range planets {
 		p := planets[i]
 		pJson, err := json.Marshal(p)
 		if err != nil {
@@ -51,5 +66,5 @@ func planetsJSON(w http.ResponseWriter, planets []Planet) {
 		fmt.Fprintf(w, "%v%v", separator, string(pJson))
 		separator = ",\n"
 	}
-	fmt.Fprintf(w, "]}")
+	fmt.Fprintf(w, "]")
 }
