@@ -82,7 +82,15 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 
 			switch m.Command {
 			case "build":
-				planets[m.ParamsBuild.Id].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type = m.ParamsBuild.Type
+				if planets[m.ParamsBuild.PlanetId].OwnerId == playerId {
+					if planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type == "" {
+						planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type = m.ParamsBuild.Type
+					} else {
+						// error: there's already something there
+					}
+				} else {
+					// error: trying to build in somebody else's planet
+				}
 			case "changePlanetName":
 				planetId := m.ParamsChangePlanetName.Id
 				planets[planetId].Name = m.ParamsChangePlanetName.Name

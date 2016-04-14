@@ -12,8 +12,8 @@ type ParamsChangePlanetName struct {
 }
 
 type ParamsBuild struct {
-	Type string `json:"type"`
-	Id   int    `json:"id"`
-	I    int    `json:"i"`
-	J    int    `json:"j"`
+	Type     string `json:"type"`
+	PlanetId int    `json:"planetId"`
+	I        int    `json:"i"`
+	J        int    `json:"j"`
 }

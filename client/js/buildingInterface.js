@@ -7,7 +7,7 @@ var BuildingInterface = React.createClass({
          command: "build",
          paramsBuild: {
             type: type,
-            id: this.props.planet.id,
+            planetId: this.props.planet.id,
             i: i,
             j: j
          }

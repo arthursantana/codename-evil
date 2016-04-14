@@ -1,5 +1,6 @@
 package main
 
 type Building struct {
-	Type string `json:"type"`
+	Type        string `json:"type"`
+	Operational bool   `json:"operational"`
 }

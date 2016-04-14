@@ -34,10 +34,10 @@ func (p *Planet) randomize() {
 	p.Position[1] = 100 + float64(rand.Intn(550))
 	p.R = 4 //5 + float64(rand.Intn(5))
 
-	p.Population = 1000 + rand.Intn(100000)
-	p.Cattle = 1000 + rand.Intn(100000)
-	p.Energy = 1000 + rand.Intn(100000)
-	p.Obtanium = 1000 + rand.Intn(100000)
+	p.Population = 1500
+	p.Cattle = 45000
+	p.Energy = 10000
+	p.Obtanium = 10
 
 	p.Buildings = make([][]Building, p.R)
 	for i := range p.Buildings {

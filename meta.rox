@@ -8,25 +8,32 @@
       % scss
       % react instead of manually changing innerHTML
    % use for testing (forms, communication, etc): allow changing the name of your planet
-   - design
-      - basic resources
-      - buildings
-      - building/item effects
-      - ship gameplay
-   - server refactor
-      - unhack communication: type answer
-         - ___reconnect___ hack: using color to send the id, yadda yadda
-      - forbid changing resources you don't own: planet name, buildings
-      - forbid building in built places
-      - check for errors when converting types and etc: grep _
-   - build interface
-   - basic buildings
-   - building effects
+   % design
+      % basic resources
+      % basic buildings
+   % build interface
+   % basic buildings
+   % server refactor
+      % unhack communication: type Message
+      % forbid changing resources you don't own: planet name, buildings
+      % forbid building in built places
+   - tick
+      - pop/cattle growth
+      - building effects
+      - building cost/time?
+   - design: ship gameplay
    - ships
       - interfaces
       - effects
       - owning new colonies
          - easy "jump between my planets" button
+   - communication refactor
+      - server should answer all messages, at least with 'ok' or 'fail', etc
+         - client should not let you TRY to change resources you don't own: shouldn't show edit button on name, click to build, etc
+      - client should receive data directly from tick
+      - maybe client should test type of messages received? registered player, new tick, etc
+      - ___reconnect___ hack: using color to send the id, yadda yadda; should use Message
+      - check for errors when converting types and etc: grep _
    - tidy up visuals
       - decent font
       - bootstrap
@@ -46,6 +53,7 @@
    - ships
    - items
    - planet effects
+   - scale factors: e.g. multiple generators together are more efficient: promotes specialized planets, more varied gameplay
    - different races
 === week 4
 - persist
