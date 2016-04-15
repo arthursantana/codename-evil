@@ -28,18 +28,38 @@ var BuildingInterface = React.createClass({
                <div>
                   <div className="tile farm" title={buildingTitle("farm")} onClick={this.build.bind(this, "farm")} ></div>
                   Farm
+                  <div className="buildingCosts">
+                     0 <span className="resource obtanium" title="Obtanium"></span>
+                     1k <span className="resource workers" title="Workers"></span>
+                     <span className="resource energy" title="Energy"></span>
+                  </div>
                </div>
                <div>
                   <div className="tile generator" title={buildingTitle("generator")} onClick={this.build.bind(this, "generator")} ></div>
                   Generator
+                  <div className="buildingCosts">
+                     8 <span className="resource obtanium" title="Obtanium"></span>
+                     5k<span className="resource workers" title="Workers"></span>
+                     50<span className="resource energy" title="Energy"></span>
+                  </div>
                </div>
                <div>
                   <div className="tile vale" title={buildingTitle("vale")} onClick={this.build.bind(this, "vale")} ></div>
                   Vale
+                  <div className="buildingCosts">
+                     80 <span className="resource obtanium" title="Obtanium"></span>
+                     50k<span className="resource workers" title="Workers"></span>
+                     2k<span className="resource energy" title="Energy"></span>
+                  </div>
                </div>
                <div>
                   <div className="tile nasa" title={buildingTitle("nasa")} onClick={this.build.bind(this, "nasa")} ></div>
                   Nasa
+                  <div className="buildingCosts">
+                     40 <span className="resource obtanium" title="Obtanium"></span>
+                     100k<span className="resource workers" title="Workers"></span>
+                     1k<span className="resource energy" title="Energy"></span>
+                  </div>
                </div>
             </div>
          );

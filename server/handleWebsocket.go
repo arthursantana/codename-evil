@@ -67,7 +67,6 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 					playerId = len(players)
 					players = append(players, p)
 					planets[playerId].OwnerId = playerId
-					planets[playerId].Buildings[0][0].Type = "hq"
 					answer = strconv.Itoa(playerId)
 				}
 			}
@@ -84,7 +83,23 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 			case "build":
 				if planets[m.ParamsBuild.PlanetId].OwnerId == playerId {
 					if planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type == "" {
-						planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type = m.ParamsBuild.Type
+						obtaniumCost := 0
+						switch m.ParamsBuild.Type {
+						case "generator":
+							obtaniumCost = 8
+						case "nasa":
+							obtaniumCost = 40
+						case "vale":
+							obtaniumCost = 80
+						}
+
+						if planets[m.ParamsBuild.PlanetId].Obtanium >= obtaniumCost {
+							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type = m.ParamsBuild.Type
+							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Operational = false
+							planets[m.ParamsBuild.PlanetId].Obtanium -= obtaniumCost
+						} else {
+							// error: not enough obtanium
+						}
 					} else {
 						// error: there's already something there
 					}

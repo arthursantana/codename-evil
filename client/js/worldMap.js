@@ -29,9 +29,15 @@ var WorldMap = React.createClass({
 
       for (var i = 0; i < buildings.length; i++) {
          var tiles = [];
+         var op;
 
          for (var j = 0; j < buildings.length; j++) {
-            tiles.push(<div key={j} className={"tile "+buildings[i][j].type} title={buildingTitle(buildings[i][j])} onClick={this.setSelectedBuilding.bind(this, buildings[i][j], i, j)} ></div>);
+            if (buildings[i][j].operational == true)
+               op = "";
+            else
+               op = " notOperational";
+
+            tiles.push(<div key={j} className={"tile "+buildings[i][j].type+op} title={buildingTitle(buildings[i][j])} onClick={this.setSelectedBuilding.bind(this, buildings[i][j], i, j)} ></div>);
          }
 
          rows.push(

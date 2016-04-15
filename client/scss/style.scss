@@ -91,29 +91,33 @@ body {
    #resourceList {
       float: right;
       text-align: right;
+   }
 
-      .resource {
-         height: 32px;
-         width: 32px;
-         margin-left: 1em;
-         display: inline-block;
-      }
+   .resource {
+      height: 32px;
+      width: 32px;
+      margin-left: 1em;
+      display: inline-block;
+   }
 
-      .pop {
-         background-image: url("/static/img/pop.png");
-      }
+   .workers {
+      background-image: url("/static/img/workers.png");
+   }
 
-      .vaca {
-         background-image: url("/static/img/vaca.png");
-      }
+   .cattle {
+      background-image: url("/static/img/cattle.png");
+   }
 
-      .joules {
-         background-image: url("/static/img/joules.png");
-      }
+   .energy {
+      background-image: url("/static/img/energy.png");
+   }
 
-      .obtanium {
-         background-image: url("/static/img/obtanium.png");
-      }
+   .obtanium {
+      background-image: url("/static/img/obtanium.png");
+   }
+
+   .notEnough {
+      color: #f00;
    }
 
    #worldMap {
@@ -161,7 +165,21 @@ body {
       background-image: url("/static/img/vale.png");
    }
 
+   .notOperational {
+      background-color: #442222;
+      background-blend-mode: multiply;
+   }
+
    #buildingInterface {
       @include modal-small;
+
+      .buildingCosts {
+         float: right;
+         text-align: right;
+
+         .resource {
+            margin-left: 0;
+         }
+      }
    }
 }

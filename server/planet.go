@@ -17,37 +17,46 @@ type Planet struct {
 	R        int        `json:"r"`
 
 	// resources
-	Population int `json:"population"`
-	Cattle     int `json:"cattle"`
-	Energy     int `json:"energy"`
-	Obtanium   int `json:"obtanium"`
+	Workers  int `json:"workers"`
+	Cattle   int `json:"cattle"`
+	Energy   int `json:"energy"`
+	Obtanium int `json:"obtanium"`
+
+	BusyWorkers int `json:"busyWorkers"`
+	BusyCattle  int `json:"busyCattle"`
+	BusyEnergy  int `json:"busyEnergy"`
+
+	NotEnoughWorkers bool `json:"notEnoughWorkers"`
+	NotEnoughCattle  bool `json:"notEnoughCattle"`
+	NotEnoughEnergy  bool `json:"notEnoughEnergy"`
+	NotEnoughFarms   bool `json:"notEnoughFarms"`
 
 	Buildings [][]Building `json:"buildings"`
 }
 
 func (p *Planet) randomize() {
-	bigString := "akdfya87w36c4iungt2673tc5unyedc7g2j97sa6ged7f6cnrgnydgf7awgcj57g62cnybfubwhe897r6gc7c63k84r"
-	pos := rand.Intn(65)
-	p.Name = bigString[pos : pos+rand.Intn(10)+5]
+	p.Name = "Big Rock"
 
-	p.Position[0] = 100 + float64(rand.Intn(550))
-	p.Position[1] = 100 + float64(rand.Intn(550))
+	p.Position[0] = 50 + float64(rand.Intn(650))
+	p.Position[1] = 50 + float64(rand.Intn(650))
 	p.R = 4 //5 + float64(rand.Intn(5))
 
-	p.Population = 1500
+	p.Workers = 1000
 	p.Cattle = 45000
-	p.Energy = 10000
-	p.Obtanium = 10
+	p.Energy = 0
+	p.Obtanium = 0
 
 	p.Buildings = make([][]Building, p.R)
 	for i := range p.Buildings {
 		p.Buildings[i] = make([]Building, p.R)
 
 		for j := range p.Buildings[i] {
-			p.Buildings[i][j] = Building{}
+			p.Buildings[i][j] = Building{"", true}
 		}
-
 	}
+
+	p.Buildings[0][0].Type = "hq"
+	p.Buildings[0][0].Operational = true
 
 	p.OwnerId = -1
 }

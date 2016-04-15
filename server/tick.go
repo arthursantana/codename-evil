@@ -1,32 +1,31 @@
 package main
 
 import (
-	"log"
 	"math"
 )
 
 const (
-	popFertility                               = 0.1
-	cattleFertility                            = 0.02
+	workerFertility                            = 0.1
+	cattleFertility                            = 0.2
 	mealsPerCow                                = 20
 	cattleReproductionToFoodRateAtStableGrowth = 2
 
-	maxCattlePerHQ   = 100000
+	maxCattlePerHQ   = 50000
 	maxCattlePerFarm = 100000
 
-	energyPerHQ        = 10
-	energyPerGenerator = 30
-	energyPerFarm      = -1
-	energyPerNasa      = -10
-	energyPerVale      = -20
+	energyPerHQ        = 100
+	energyPerGenerator = 700
+	energyPerFarm      = -50
+	energyPerNasa      = -1000
+	energyPerVale      = -2000
 
 	obtaniumPerVale = 15
 	obtaniumPerHQ   = 1
 
-	operatorsPerFarm      = 1000
-	operatorsPerGenerator = 5000
-	operatorsPerVale      = 10000
-	operatorsPerNasa      = 20000
+	operatorsPerFarm      = -1000
+	operatorsPerGenerator = -5000
+	operatorsPerVale      = -50000
+	operatorsPerNasa      = -100000
 )
 
 func tick() {
@@ -35,7 +34,15 @@ func tick() {
 			continue
 		}
 
-		freeWorkers := planets[i].Population
+		freeWorkers := planets[i].Workers
+
+		planets[i].BusyWorkers = 0
+		planets[i].BusyCattle = 0
+		planets[i].BusyEnergy = 0
+		planets[i].NotEnoughWorkers = false
+		planets[i].NotEnoughCattle = false
+		planets[i].NotEnoughEnergy = false
+		planets[i].NotEnoughFarms = false
 
 		// count number of operating generators
 		generators := 0
@@ -43,12 +50,14 @@ func tick() {
 		for j := range planets[i].Buildings {
 			for k := range planets[i].Buildings[j] {
 				if planets[i].Buildings[j][k].Type == "generator" {
-					if freeWorkers > operatorsPerGenerator {
+					planets[i].BusyWorkers -= operatorsPerGenerator
+					if freeWorkers > -1*operatorsPerGenerator {
 						generators++
-						freeWorkers -= operatorsPerGenerator
+						freeWorkers += operatorsPerGenerator
 						planets[i].Buildings[j][k].Operational = true
 					} else {
 						planets[i].Buildings[j][k].Operational = false
+						planets[i].NotEnoughWorkers = true
 					}
 				}
 			}
@@ -58,7 +67,8 @@ func tick() {
 		farms := 0
 		vales := 0
 		nasas := 0
-		freeEnergy := energyPerGenerator*generators + energyPerHQ
+		planets[i].Energy = energyPerGenerator*generators + energyPerHQ
+		freeEnergy := planets[i].Energy
 		dummy := 0
 		count := &dummy
 		for j := range planets[i].Buildings {
@@ -66,6 +76,8 @@ func tick() {
 				operatorsPerThing := 0
 				energyPerThing := 0
 				switch planets[i].Buildings[j][k].Type {
+				default:
+					continue
 				case "farm":
 					operatorsPerThing = operatorsPerFarm
 					energyPerThing = energyPerFarm
@@ -78,52 +90,54 @@ func tick() {
 					operatorsPerThing = operatorsPerNasa
 					energyPerThing = energyPerNasa
 					count = &nasas
-				default:
-					continue
 				}
 
-				if freeWorkers > operatorsPerThing && freeEnergy > energyPerThing {
+				planets[i].BusyWorkers -= operatorsPerThing
+				planets[i].BusyEnergy -= energyPerThing
+				if freeWorkers >= -1*operatorsPerThing && freeEnergy >= -1*energyPerThing {
 					*count++
-					freeWorkers -= operatorsPerThing
+					freeWorkers += operatorsPerThing
 					freeEnergy += energyPerThing
 					planets[i].Buildings[j][k].Operational = true
 				} else {
+					if freeWorkers < -1*operatorsPerThing {
+						planets[i].NotEnoughWorkers = true
+					} else {
+						planets[i].NotEnoughEnergy = true
+					}
 					planets[i].Buildings[j][k].Operational = false
 				}
 			}
 		}
 
-		// population and cattle
-		{
-			// births and cattle consumption
-			newPeople := int(math.Ceil(float64(planets[i].Population) * popFertility))
-			newCattle := int(math.Ceil(float64(planets[i].Cattle) * cattleFertility))
-			planets[i].Population += newPeople
+		// WORKERS AND CATTLE
+		// births and cattle consumption
+		newWorkers := int(math.Ceil(float64(planets[i].Workers) * workerFertility))
+		newCattle := int(math.Ceil(float64(planets[i].Cattle) * cattleFertility))
+		planets[i].Workers += newWorkers
 
-			// consume food
-			consumptionRate := float64(newCattle*mealsPerCow) / (cattleReproductionToFoodRateAtStableGrowth * float64(planets[i].Population))
-			cattleConsumption := int(math.Ceil(float64(newCattle) * consumptionRate))
-
-			if cattleConsumption*mealsPerCow > planets[i].Population {
-				cattleConsumption = planets[i].Population / mealsPerCow
-			} else {
-				planets[i].Population = cattleConsumption * mealsPerCow
-			}
-			planets[i].Cattle -= cattleConsumption
-
-			// limit cattle population
-			cattleLimit := (farms)*maxCattlePerFarm + maxCattlePerHQ
-			planets[i].Cattle += newCattle
-			if planets[i].Cattle > cattleLimit {
-				planets[i].Cattle = cattleLimit
-			}
+		// limit cattle workers
+		cattleLimit := (farms)*maxCattlePerFarm + maxCattlePerHQ
+		planets[i].Cattle += newCattle
+		if planets[i].Cattle > cattleLimit {
+			planets[i].Cattle = cattleLimit
+			planets[i].NotEnoughFarms = true
 		}
 
-		// building effects
-		planets[i].Obtanium += obtaniumPerVale*vales + obtaniumPerHQ
-		planets[i].Energy = freeEnergy
+		// consume food
+		consumptionRate := float64(newCattle*mealsPerCow) / (cattleReproductionToFoodRateAtStableGrowth * float64(planets[i].Workers))
+		cattleConsumption := int(math.Ceil(float64(newCattle) * consumptionRate))
 
-		log.Printf("generators: %v, farms: %v, nasas: %v, vales: %v\n", generators, farms, nasas, vales)
-		log.Printf("free workers: %v, free energy: %v", freeWorkers, freeEnergy)
+		if cattleConsumption*mealsPerCow > planets[i].Workers {
+			cattleConsumption = planets[i].Workers / mealsPerCow
+		} else {
+			planets[i].Workers = cattleConsumption * mealsPerCow
+			planets[i].NotEnoughCattle = true
+		}
+		planets[i].BusyCattle = planets[i].Cattle - newCattle
+		planets[i].Cattle -= cattleConsumption
+
+		// mining
+		planets[i].Obtanium += obtaniumPerVale*vales + obtaniumPerHQ
 	}
 }

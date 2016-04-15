@@ -17,46 +17,55 @@
       % unhack communication: type Message
       % forbid changing resources you don't own: planet name, buildings
       % forbid building in built places
-   - tick
-      - pop/cattle growth
-      - building effects
-      - building cost/time?
+   % tick pt I
+      % pop/cattle growth
+      % building effects
    - design: ship gameplay
    - ships
       - interfaces
       - effects
       - owning new colonies
          - easy "jump between my planets" button
-   - communication refactor
-      - server should answer all messages, at least with 'ok' or 'fail', etc
-         - client should not let you TRY to change resources you don't own: shouldn't show edit button on name, click to build, etc
-      - client should receive data directly from tick
-      - maybe client should test type of messages received? registered player, new tick, etc
-      - ___reconnect___ hack: using color to send the id, yadda yadda; should use Message
-      - check for errors when converting types and etc: grep _
-   - tidy up visuals
-      - decent font
-      - bootstrap
-      - background stars
-      - planet effects
-      - window effects: animated transitions, transparencies, etc
-   - run ok on mobile
-      - no pinch to zoom
-      - manifest
-         - full screen
-         - landscape
+   - combat/conquering
 
 === week 3
-- refactor interface: has to be easy to manage all your planets and ships and whatever
-- content
-   - buildings
-   - ships
-   - items
+- tidy up visuals pt I
+   - background stars
    - planet effects
+- refactor interface: has to be easy to manage all your planets and ships and whatever
+- content part I
+   - planet effects
+      - different sizes
+   - upgrades
+   - ships
+- balance: make it fun with varied viable strats
+   - limit obtanium per planet: promotes non-turtling
    - scale factors: e.g. multiple generators together are more efficient: promotes specialized planets, more varied gameplay
-   - different races
 === week 4
 - persist
+=== extra
+- content part II
+   - different races
+   - items
+   - buildings
+- run ok on mobile
+   - no pinch to zoom
+   - manifest
+      - full screen
+      - landscape
+- tick pt II
+   - building cost/time?
+- communication refactor
+   - server should answer all messages, at least with 'ok' or 'fail', etc
+      - client should not let you TRY to change resources you don't own: shouldn't show edit button on name, click to build, etc
+   - client should receive data directly from tick
+   - maybe client should test type of messages received? registered player, new tick, etc
+   - ___reconnect___ hack: using color to send the id, yadda yadda; should use Message
+   - check for errors when converting types and etc: grep _
+- tidy up visuals pt II
+   - decent font
+   - bootstrap
+   - window effects: animated transitions, transparencies, etc
 
 # FALTA
 - bug ARGXYZ
