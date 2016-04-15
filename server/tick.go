@@ -139,5 +139,10 @@ func tick() {
 
 		// mining
 		planets[i].Obtanium += obtaniumPerVale*vales + obtaniumPerHQ
+
+		// move ships
+		for i := range ships {
+			ships[i].move()
+		}
 	}
 }

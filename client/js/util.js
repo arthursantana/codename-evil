@@ -8,3 +8,7 @@ function buildingTitle (building) {
       case "vale": return "Vale Obtanium Inc.";
    }
 }
+
+function commalizer(x) {
+   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

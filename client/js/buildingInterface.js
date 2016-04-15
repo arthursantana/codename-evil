@@ -16,11 +16,30 @@ var BuildingInterface = React.createClass({
       this.props.unselectBuilding();
    },
 
+   buildShip: function(type) {
+      var i = this.props.selectedI;
+      var j = this.props.selectedJ;
+
+      socket.send(JSON.stringify({
+         command: "buildShip",
+         paramsBuildShip: {
+            type: type,
+            name: prompt("Ship name", "S.S. Enterprise"),
+            planetId: this.props.planet.id,
+         }
+      }));
+
+      this.props.unselectBuilding();
+   },
+
    render: function () {
       var b = this.props.selectedBuilding;
 
       if (b == null)
-         return null
+         return null;
+
+      if (b.operational == false)
+         return null;
 
       if (b.type == "") {
          interfaceBody = (
@@ -31,7 +50,7 @@ var BuildingInterface = React.createClass({
                   <div className="buildingCosts">
                      0 <span className="resource obtanium" title="Obtanium"></span>
                      1k <span className="resource workers" title="Workers"></span>
-                     <span className="resource energy" title="Energy"></span>
+                     50<span className="resource energy" title="Energy"></span>
                   </div>
                </div>
                <div>
@@ -39,8 +58,8 @@ var BuildingInterface = React.createClass({
                   Generator
                   <div className="buildingCosts">
                      8 <span className="resource obtanium" title="Obtanium"></span>
-                     5k<span className="resource workers" title="Workers"></span>
-                     50<span className="resource energy" title="Energy"></span>
+                     5k <span className="resource workers" title="Workers"></span>
+                     0 <span className="resource energy" title="Energy"></span>
                   </div>
                </div>
                <div>
@@ -48,8 +67,8 @@ var BuildingInterface = React.createClass({
                   Vale
                   <div className="buildingCosts">
                      80 <span className="resource obtanium" title="Obtanium"></span>
-                     50k<span className="resource workers" title="Workers"></span>
-                     2k<span className="resource energy" title="Energy"></span>
+                     50k <span className="resource workers" title="Workers"></span>
+                     2k <span className="resource energy" title="Energy"></span>
                   </div>
                </div>
                <div>
@@ -57,8 +76,20 @@ var BuildingInterface = React.createClass({
                   Nasa
                   <div className="buildingCosts">
                      40 <span className="resource obtanium" title="Obtanium"></span>
-                     100k<span className="resource workers" title="Workers"></span>
-                     1k<span className="resource energy" title="Energy"></span>
+                     100k <span className="resource workers" title="Workers"></span>
+                     1k <span className="resource energy" title="Energy"></span>
+                  </div>
+               </div>
+            </div>
+         );
+      } else if (b.type == "nasa") {
+         interfaceBody = (
+            <div>
+               <div>
+                  <div className="shipIcon colonizer" onClick={this.buildShip.bind(this,"colonizer")}></div>
+                  Colonizer
+                  <div className="shipCosts">
+                     100 <span className="resource obtanium" title="Obtanium"></span>
                   </div>
                </div>
             </div>

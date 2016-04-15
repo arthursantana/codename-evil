@@ -36,6 +36,8 @@ var ManagementInterface = React.createClass({
 
                <ResourceList planet={this.props.selectedPlanet} />
                <WorldMap planet={this.props.selectedPlanet} />
+
+               <ShipList planet={this.props.selectedPlanet} ships={this.props.ships} enterSetVoyageMode={this.props.enterSetVoyageMode} />
             </div>
          )
       }

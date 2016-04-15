@@ -32,19 +32,27 @@ type Planet struct {
 	NotEnoughFarms   bool `json:"notEnoughFarms"`
 
 	Buildings [][]Building `json:"buildings"`
+
+	DockSpace int `json:"dockSpace"`
 }
 
+var defaultNames = []string{"Big Rock", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Neptune", "Uranus", "Pluto", "Urectum", "Tessia", "Sur'Kesh", "Tuchanka", "Omega", "Palaven", "Rannoch", "3834 Zappafrank", "Omicron Persei 8", "Chez le Petit Prince"}
+
 func (p *Planet) randomize() {
-	p.Name = "Big Rock"
+	index := rand.Intn(len(defaultNames))
+	p.Name = defaultNames[index]
+	defaultNames = append(defaultNames[:index], defaultNames[index+1:]...)
 
 	p.Position[0] = 50 + float64(rand.Intn(650))
 	p.Position[1] = 50 + float64(rand.Intn(650))
 	p.R = 4 //5 + float64(rand.Intn(5))
 
-	p.Workers = 1000
-	p.Cattle = 45000
+	p.Workers = 100000
+	p.Cattle = 50000
 	p.Energy = 0
-	p.Obtanium = 0
+	p.Obtanium = 1000
+
+	p.DockSpace = 5
 
 	p.Buildings = make([][]Building, p.R)
 	for i := range p.Buildings {

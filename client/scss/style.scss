@@ -32,6 +32,10 @@ body {
    display: block;
 }
 
+#starMap.voyageMode {
+   cursor: url("/static/img/colonizer.png") 32 0, auto;
+}
+
 @mixin modal {
    background-color: rgba(20,20,20,0.95);
    color: white;
@@ -86,6 +90,10 @@ body {
          display: inline-block;
          margin: 0 1em 0 0;
       }
+   }
+
+   #shipList {
+      margin-top: 2em;
    }
 
    #resourceList {
@@ -165,6 +173,16 @@ body {
       background-image: url("/static/img/vale.png");
    }
 
+   .shipIcon {
+      width: 32px;
+      height: 32px;
+      display: inline-block
+   }
+
+   .colonizer {
+      background-image: url("/static/img/colonizer.png");
+   }
+
    .notOperational {
       background-color: #442222;
       background-blend-mode: multiply;
@@ -173,7 +191,7 @@ body {
    #buildingInterface {
       @include modal-small;
 
-      .buildingCosts {
+      .buildingCosts, .shipCosts {
          float: right;
          text-align: right;
 

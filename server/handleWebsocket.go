@@ -106,6 +106,50 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				} else {
 					// error: trying to build in somebody else's planet
 				}
+			case "buildShip":
+				if planets[m.ParamsBuildShip.PlanetId].OwnerId == playerId {
+					obtaniumCost := 0
+
+					switch m.ParamsBuildShip.Type {
+					case "colonizer":
+						obtaniumCost = 100
+					}
+
+					if planets[m.ParamsBuildShip.PlanetId].DockSpace > 0 && planets[m.ParamsBuildShip.PlanetId].Obtanium >= obtaniumCost {
+						s := Ship{playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, [2]float64{0, 0}, 0, 0, 0}
+						ships = append(ships, s)
+
+						planets[m.ParamsBuildShip.PlanetId].Obtanium -= obtaniumCost
+						planets[m.ParamsBuildShip.PlanetId].DockSpace--
+					} else {
+						// error: not enough space or obtanium
+					}
+				} else {
+					// error: trying to build in somebody else's planet
+				}
+			case "setVoyage":
+				ship := &ships[m.ParamsSetVoyage.ShipId]
+
+				if ship.OwnerId == playerId {
+					if ship.PlanetId != -1 {
+						if planets[ship.PlanetId].OwnerId == playerId {
+							ship.PlanetId = -1
+
+							// needs to test and subtract
+							ship.Workers = m.ParamsSetVoyage.Workers
+							ship.Cattle = m.ParamsSetVoyage.Cattle
+							ship.Obtanium = m.ParamsSetVoyage.Obtanium
+
+							ship.Destination = planets[m.ParamsSetVoyage.DestinationId].Position
+						} else {
+							// error: how the hell did this happen? (probably custom JSON sent to API)
+						}
+					} else {
+						// error: can't order ships that are not docked
+					}
+				} else {
+					// error: trying to fly somebody else's ship
+				}
 			case "changePlanetName":
 				planetId := m.ParamsChangePlanetName.Id
 				planets[planetId].Name = m.ParamsChangePlanetName.Name

@@ -5,6 +5,7 @@ var Game = React.createClass({
       return {
          players: null,
          planets: null,
+         selectedShip: null,
          selectedPlanet: null
       };
    },
@@ -15,6 +16,14 @@ var Game = React.createClass({
 
    setSelectedPlanet: function (planet) {
       this.setState({ selectedPlanet: planet });
+   },
+
+   enterSetVoyageMode: function (ship) {
+      this.setState({ selectedPlanet: null, selectedShip: ship });
+   },
+   
+   quitSetVoyageMode: function () {
+      this.setState({ selectedShip: null });
    },
 
    getData: function () {
@@ -41,6 +50,7 @@ var Game = React.createClass({
             self.setState({
                players: answer.players,
                planets: answer.planets,
+               ships: answer.ships,
                selectedPlanet: selectedPlanet
             });
          },
@@ -53,15 +63,15 @@ var Game = React.createClass({
    render: function () {
       return (
          <div>
-            <StarMap planets={this.state.planets} players={this.state.players} setSelectedPlanet={this.setSelectedPlanet} />
-            <ManagementInterface planets={this.state.planets} players={this.state.players} selectedPlanet={this.state.selectedPlanet} unselectPlanet={this.unselectPlanet} />
+            <StarMap planets={this.state.planets} players={this.state.players} ships={this.state.ships} setSelectedPlanet={this.setSelectedPlanet} selectedShip={this.state.selectedShip} quitSetVoyageMode={this.quitSetVoyageMode} />
+            <ManagementInterface planets={this.state.planets} players={this.state.players} ships={this.state.ships} selectedPlanet={this.state.selectedPlanet} unselectPlanet={this.unselectPlanet} enterSetVoyageMode={this.enterSetVoyageMode} />
          </div>
       );
    },
 
    componentDidMount: function () {
       var self = this;
-      socket = new WebSocket("ws://192.168.0.2:8081/ws/");
+      socket = new WebSocket("ws://192.168.0.21:8081/ws/");
 
       socket.onopen = function (event) {
          if (document.cookie == null || document.cookie == 0) {

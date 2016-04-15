@@ -11,6 +11,7 @@ import (
 var lastDataUpdate int64
 var planets []Planet
 var players []Player
+var ships []Ship
 
 func main() {
 	var (
@@ -27,6 +28,7 @@ func main() {
 	lastDataUpdate = 0
 	planets = make([]Planet, *nPlanets)
 	players = make([]Player, 0)
+	ships = make([]Ship, 0)
 
 	// GENERATE RANDOM STUFF
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -51,6 +53,8 @@ func main() {
 		planetsJSON(w, planets)
 		fmt.Fprintf(w, ",\n\n")
 		playersJSON(w, players)
+		fmt.Fprintf(w, ",\n\n")
+		shipsJSON(w, ships)
 		fmt.Fprintf(w, "\n\n}")
 	})
 
