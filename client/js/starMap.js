@@ -13,7 +13,7 @@ var StarMap = React.createClass({
          ctx.beginPath();
          ctx.arc(p.position[0], p.position[1], 5*p.r, 0, 2*Math.PI, false);
          if (p.ownerId == -1)
-            ctx.fillStyle = '#ccc';
+            ctx.fillStyle = '#333';
          else
             ctx.fillStyle = this.props.players[p.ownerId].color;
          ctx.lineWidth = 2;
@@ -35,18 +35,15 @@ var StarMap = React.createClass({
       ctx.textAlign = "center";
       for (var i = 0; i < this.props.ships.length; i++) {
          var s = this.props.ships[i];
-         if (s.planetId != -1)
+         if (s.planetId != -1 || s.ownerId == -1)
             continue;
 
-         var r = 1;
+         var r = 2;
 
          ctx.beginPath();
          ctx.arc(s.position[0], s.position[1], r, 0, 2*Math.PI, false);
-         if (s.ownerId == -1)
-            ctx.fillStyle = '#ccc';
-         else
-            ctx.fillStyle = this.props.players[s.ownerId].color;
-         ctx.lineWidth = 1;
+         ctx.fillStyle = this.props.players[s.ownerId].color;
+         ctx.lineWidth = 2;
          ctx.strokeStyle = '#fff';
          ctx.stroke();
          ctx.fill();
@@ -73,9 +70,9 @@ var StarMap = React.createClass({
 
                this.props.setSelectedPlanet(p);
             } else {
-               var workers = Number(prompt("Crew size", "10000"));
-               var cattle = Number(prompt("Cattle cargo size", "10000"));
-               var obtanium = Number(prompt("Obtanium cargo size", "1000"));
+               var workers = Number(prompt("Number of colonists", "0"));
+               var cattle = Number(prompt("Cattle cargo size (supports colonists + crew of 10000)", "20000"));
+               var obtanium = Number(prompt("Obtanium cargo size", "100"));
 
                socket.send(JSON.stringify({
                   command: "setVoyage",

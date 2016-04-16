@@ -89,7 +89,7 @@ var BuildingInterface = React.createClass({
                   <div className="shipIcon colonizer" onClick={this.buildShip.bind(this,"colonizer")}></div>
                   Colonizer
                   <div className="shipCosts">
-                     100 <span className="resource obtanium" title="Obtanium"></span>
+                     400 <span className="resource obtanium" title="Obtanium"></span>
                   </div>
                </div>
             </div>

@@ -36,7 +36,7 @@ type Planet struct {
 	DockSpace int `json:"dockSpace"`
 }
 
-var defaultNames = []string{"Big Rock", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Neptune", "Uranus", "Pluto", "Urectum", "Tessia", "Sur'Kesh", "Tuchanka", "Omega", "Palaven", "Rannoch", "3834 Zappafrank", "Omicron Persei 8", "Chez le Petit Prince"}
+var defaultNames = []string{"Big Rock", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Neptune", "Uranus", "Pluto", "Urectum", "Tessia", "Sur'Kesh", "Tuchanka", "Omega", "Palaven", "Rannoch", "3834 Zappafrank", "Omicron Persei 8", "Planet 9 from Outer Space"}
 
 func (p *Planet) randomize() {
 	index := rand.Intn(len(defaultNames))

@@ -112,11 +112,11 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 
 					switch m.ParamsBuildShip.Type {
 					case "colonizer":
-						obtaniumCost = 100
+						obtaniumCost = 400
 					}
 
 					if planets[m.ParamsBuildShip.PlanetId].DockSpace > 0 && planets[m.ParamsBuildShip.PlanetId].Obtanium >= obtaniumCost {
-						s := Ship{playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, [2]float64{0, 0}, 0, 0, 0}
+						s := Ship{len(ships), playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, nil, 0, 0, 0}
 						ships = append(ships, s)
 
 						planets[m.ParamsBuildShip.PlanetId].Obtanium -= obtaniumCost
@@ -133,14 +133,26 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				if ship.OwnerId == playerId {
 					if ship.PlanetId != -1 {
 						if planets[ship.PlanetId].OwnerId == playerId {
-							ship.PlanetId = -1
-
 							// needs to test and subtract
-							ship.Workers = m.ParamsSetVoyage.Workers
+							if planets[ship.PlanetId].Workers < m.ParamsSetVoyage.Workers+10000 ||
+								planets[ship.PlanetId].Cattle < m.ParamsSetVoyage.Cattle ||
+								planets[ship.PlanetId].Obtanium < m.ParamsSetVoyage.Obtanium {
+
+								break // not enough cargo
+							}
+
+							ship.Workers = m.ParamsSetVoyage.Workers + 10000
 							ship.Cattle = m.ParamsSetVoyage.Cattle
 							ship.Obtanium = m.ParamsSetVoyage.Obtanium
+							planets[ship.PlanetId].Workers -= ship.Workers
+							planets[ship.PlanetId].Cattle -= ship.Cattle
+							planets[ship.PlanetId].Obtanium -= ship.Obtanium
 
-							ship.Destination = planets[m.ParamsSetVoyage.DestinationId].Position
+							planets[m.ParamsBuildShip.PlanetId].DockSpace++
+
+							ship.Destination = &planets[m.ParamsSetVoyage.DestinationId]
+
+							ship.PlanetId = -1
 						} else {
 							// error: how the hell did this happen? (probably custom JSON sent to API)
 						}

@@ -30,7 +30,7 @@ const (
 
 func tick() {
 	for i := range planets {
-		if planets[i].OwnerId == -1 { // temporary: nothing happens on ownerless planets
+		if planets[i].OwnerId == -1 { // nothing happens on ownerless planets
 			continue
 		}
 
@@ -141,8 +141,11 @@ func tick() {
 		planets[i].Obtanium += obtaniumPerVale*vales + obtaniumPerHQ
 
 		// move ships
-		for i := range ships {
-			ships[i].move()
+		for i := 0; i < len(ships); i++ {
+			if ships[i].PlanetId == -1 && ships[i].OwnerId != -1 { // ship is not docked and is alive
+				ships[i].move()
+				ships[i].tick()
+			}
 		}
 	}
 }

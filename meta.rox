@@ -21,32 +21,33 @@
       % pop/cattle growth
       % building effects
    % design: basic ship gameplay
-   - ships
+   % ships
       % building
-      - colonizing
-      - client should recommend good numbers of crew and cargo
+      % colonizing
    - combat/conquering
 
 === week 3
-- empty squares generate resources
 - tidy up visuals pt I
    - background stars
    - planet effects
-- refactor interface: has to be easy to manage all your planets and ships and whatever
-   - easy "jump between my planets" button
-   - easy "jump between my ships" button
 - content part I
    - planet effects
       - different sizes
    - upgrades
    - ships
 - balance: make it fun with varied viable strats
+   - empty squares generate resources
    - limit obtanium per planet: promotes non-turtling
    - scale factors: e.g. multiple generators together are more efficient: promotes specialized planets, more varied gameplay
       - implementation idea: upgrades per planet - makes you want to have same type of buildings in a planet
+- refactor interface: has to be easy to manage all your planets and ships and whatever
+   - easy "jump between my planets" button
+   - easy "jump between my ships" button
 === week 4
 - persist
 === extra
+- client should recommend good numbers of crew and cargo
+- horrible hack: ships who disappear become owned by user -1
 - content part II
    - different races
    - items
