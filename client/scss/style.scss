@@ -148,9 +148,10 @@ body {
    }
 
    .tile {
-         width: 64px;
-         height: 65px;
-         display: inline-block;
+      cursor: pointer;
+      width: 64px;
+      height: 65px;
+      display: inline-block;
    }
 
    .farm {

@@ -5,25 +5,30 @@ import (
 )
 
 const (
-	workerFertility                            = 0.1
-	cattleFertility                            = 0.2
+	workerFertility                            = 0.05
+	cattleFertility                            = 0.1
 	mealsPerCow                                = 20
 	cattleReproductionToFoodRateAtStableGrowth = 2
 
-	maxCattlePerHQ   = 50000
-	maxCattlePerFarm = 100000
+	maxCattlePerHQ   = 60000
+	maxCattlePerFarm = 30000
 
 	energyPerHQ        = 100
-	energyPerGenerator = 700
-	energyPerFarm      = -50
+	energyPerGenerator = 1000
+	energyPerFarm      = -100
 	energyPerNasa      = -1000
 	energyPerVale      = -2000
 
-	obtaniumPerVale = 15
-	obtaniumPerHQ   = 1
+	obtaniumPerVale = 20
+	obtaniumPerHQ   = 10
+
+	obtaniumCostPerFarm      = 100
+	obtaniumCostPerGenerator = 200
+	obtaniumCostPerVale      = 800
+	obtaniumCostPerNasa      = 400
 
 	operatorsPerFarm      = -1000
-	operatorsPerGenerator = -5000
+	operatorsPerGenerator = -10000
 	operatorsPerVale      = -50000
 	operatorsPerNasa      = -100000
 )
@@ -144,7 +149,6 @@ func tick() {
 		for i := 0; i < len(ships); i++ {
 			if ships[i].PlanetId == -1 && ships[i].OwnerId != -1 { // ship is not docked and is alive
 				ships[i].move()
-				ships[i].tick()
 			}
 		}
 	}

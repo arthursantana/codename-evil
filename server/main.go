@@ -25,6 +25,10 @@ func main() {
 	// VALIDATE NUMBERS HERE
 	// END
 
+	if *nPlanets > 20 {
+		*nPlanets = 20
+	}
+
 	lastDataUpdate = 0
 	planets = make([]Planet, *nPlanets)
 	players = make([]Player, 0)

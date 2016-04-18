@@ -18,7 +18,7 @@ init:
 	go get github.com/gorilla/websocket
 
 run:
-	cd dist; ./evil; cd ..
+	cd dist; ./evil ${ARGS}; cd ..
 
 watch:
 	node node_modules/gulp/bin/gulp.js watch

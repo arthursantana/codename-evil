@@ -10,8 +10,10 @@ var StarMap = React.createClass({
       for (var i = 0; i < this.props.planets.length; i++) {
          var p = this.props.planets[i];
 
+         r = 2*p.r;
+
          ctx.beginPath();
-         ctx.arc(p.position[0], p.position[1], 5*p.r, 0, 2*Math.PI, false);
+         ctx.arc(p.position[0], p.position[1], r, 0, 2*Math.PI, false);
          if (p.ownerId == -1)
             ctx.fillStyle = '#333';
          else
@@ -21,7 +23,7 @@ var StarMap = React.createClass({
          ctx.stroke();
          ctx.fill();
          ctx.fillStyle = "white";
-         ctx.fillText(p.name,p.position[0],p.position[1]+5*p.r+20);
+         ctx.fillText(p.name,p.position[0],p.position[1]+r+20);
       }
    },
 
@@ -43,7 +45,7 @@ var StarMap = React.createClass({
          ctx.beginPath();
          ctx.arc(s.position[0], s.position[1], r, 0, 2*Math.PI, false);
          ctx.fillStyle = this.props.players[s.ownerId].color;
-         ctx.lineWidth = 2;
+         ctx.lineWidth = r;
          ctx.strokeStyle = '#fff';
          ctx.stroke();
          ctx.fill();
@@ -62,7 +64,7 @@ var StarMap = React.createClass({
 
          dx = x-p.position[0];
          dy = y-p.position[1];
-         r = 5*p.r;
+         r = 2*p.r;
 
          if (dx*dx + dy*dy < r*r) {
             if (this.props.selectedShip == null) {
@@ -70,18 +72,11 @@ var StarMap = React.createClass({
 
                this.props.setSelectedPlanet(p);
             } else {
-               var workers = Number(prompt("Number of colonists", "0"));
-               var cattle = Number(prompt("Cattle cargo size (supports colonists + crew of 10000)", "20000"));
-               var obtanium = Number(prompt("Obtanium cargo size", "100"));
-
                socket.send(JSON.stringify({
                   command: "setVoyage",
                   paramsSetVoyage: {
                      shipId: this.props.selectedShip.id,
-                     destinationId: p.id,
-                     workers: workers,
-                     cattle: cattle,
-                     obtanium: obtanium
+                     destinationId: p.id
                   }
                }));
             }

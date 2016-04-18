@@ -85,12 +85,14 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 					if planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type == "" {
 						obtaniumCost := 0
 						switch m.ParamsBuild.Type {
+						case "farm":
+							obtaniumCost = obtaniumCostPerFarm
 						case "generator":
-							obtaniumCost = 8
+							obtaniumCost = obtaniumCostPerGenerator
 						case "nasa":
-							obtaniumCost = 40
+							obtaniumCost = obtaniumCostPerNasa
 						case "vale":
-							obtaniumCost = 80
+							obtaniumCost = obtaniumCostPerVale
 						}
 
 						if planets[m.ParamsBuild.PlanetId].Obtanium >= obtaniumCost {
@@ -108,17 +110,26 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				}
 			case "buildShip":
 				if planets[m.ParamsBuildShip.PlanetId].OwnerId == playerId {
+					workerCost := 0
+					cattleCost := 0
 					obtaniumCost := 0
 
 					switch m.ParamsBuildShip.Type {
 					case "colonizer":
-						obtaniumCost = 400
+						workerCost = workerCostPerColonizer
+						cattleCost = cattleCostPerColonizer
+						obtaniumCost = obtaniumCostPerColonizer
 					}
 
-					if planets[m.ParamsBuildShip.PlanetId].DockSpace > 0 && planets[m.ParamsBuildShip.PlanetId].Obtanium >= obtaniumCost {
-						s := Ship{len(ships), playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, nil, 0, 0, 0}
+					if planets[m.ParamsBuildShip.PlanetId].DockSpace > 0 &&
+						planets[m.ParamsBuildShip.PlanetId].Workers >= workerCost &&
+						planets[m.ParamsBuildShip.PlanetId].Cattle >= cattleCost &&
+						planets[m.ParamsBuildShip.PlanetId].Obtanium >= obtaniumCost {
+						s := Ship{len(ships), playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, nil}
 						ships = append(ships, s)
 
+						planets[m.ParamsBuildShip.PlanetId].Workers -= workerCost
+						planets[m.ParamsBuildShip.PlanetId].Cattle -= cattleCost
 						planets[m.ParamsBuildShip.PlanetId].Obtanium -= obtaniumCost
 						planets[m.ParamsBuildShip.PlanetId].DockSpace--
 					} else {
@@ -133,21 +144,6 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				if ship.OwnerId == playerId {
 					if ship.PlanetId != -1 {
 						if planets[ship.PlanetId].OwnerId == playerId {
-							// needs to test and subtract
-							if planets[ship.PlanetId].Workers < m.ParamsSetVoyage.Workers+10000 ||
-								planets[ship.PlanetId].Cattle < m.ParamsSetVoyage.Cattle ||
-								planets[ship.PlanetId].Obtanium < m.ParamsSetVoyage.Obtanium {
-
-								break // not enough cargo
-							}
-
-							ship.Workers = m.ParamsSetVoyage.Workers + 10000
-							ship.Cattle = m.ParamsSetVoyage.Cattle
-							ship.Obtanium = m.ParamsSetVoyage.Obtanium
-							planets[ship.PlanetId].Workers -= ship.Workers
-							planets[ship.PlanetId].Cattle -= ship.Cattle
-							planets[ship.PlanetId].Obtanium -= ship.Obtanium
-
 							planets[m.ParamsBuildShip.PlanetId].DockSpace++
 
 							ship.Destination = &planets[m.ParamsSetVoyage.DestinationId]
@@ -162,9 +158,38 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				} else {
 					// error: trying to fly somebody else's ship
 				}
+			case "sellBuilding":
+				planetId := m.ParamsSellBuilding.PlanetId
+				x := m.ParamsSellBuilding.I
+				y := m.ParamsSellBuilding.J
+
+				if planets[planetId].OwnerId == playerId && planets[planetId].Buildings[x][y].Type != "hq" {
+					obtaniumCost := 0
+					switch planets[planetId].Buildings[x][y].Type {
+					case "farm":
+						obtaniumCost = obtaniumCostPerFarm
+					case "generator":
+						obtaniumCost = obtaniumCostPerGenerator
+					case "nasa":
+						obtaniumCost = obtaniumCostPerNasa
+					case "vale":
+						obtaniumCost = obtaniumCostPerVale
+					}
+
+					planets[planetId].Obtanium += obtaniumCost / 2
+					planets[planetId].Buildings[x][y].Type = ""
+					planets[planetId].Buildings[x][y].Operational = true
+				} else {
+					// error: not your planet, dagnabbit!
+				}
 			case "changePlanetName":
 				planetId := m.ParamsChangePlanetName.Id
-				planets[planetId].Name = m.ParamsChangePlanetName.Name
+
+				if planets[planetId].OwnerId == playerId {
+					planets[planetId].Name = m.ParamsChangePlanetName.Name
+				} else {
+					// error: not your planet, dagnabbit!
+				}
 			}
 		}
 	}

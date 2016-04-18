@@ -2,31 +2,36 @@
 % play, brainstorm, basically design
 
 === week 2: have it playable on desktop, with fun, somewhat fast matches (0.5-2h)
-   % makefile
-   % client refactor
-      % gulpfile and folder structure
-      % scss
-      % react instead of manually changing innerHTML
-   % use for testing (forms, communication, etc): allow changing the name of your planet
-   % design
-      % basic resources
-      % basic buildings
-   % build interface
+% makefile
+% client refactor
+   % gulpfile and folder structure
+   % scss
+   % react instead of manually changing innerHTML
+% use for testing (forms, communication, etc): allow changing the name of your planet
+% design
+   % basic resources
    % basic buildings
-   % server refactor
-      % unhack communication: type Message
-      % forbid changing resources you don't own: planet name, buildings
-      % forbid building in built places
-   % tick pt I
-      % pop/cattle growth
-      % building effects
-   % design: basic ship gameplay
-   % ships
-      % building
-      % colonizing
-   - combat/conquering
+% build interface
+% basic buildings
+% server refactor
+   % unhack communication: type Message
+   % forbid changing resources you don't own: planet name, buildings
+   % forbid building in built places
+% tick pt I
+   % pop/cattle growth
+   % building effects
+% design: basic ship gameplay
+% ships
+   % building
+   % colonizing
 
 === week 3
+% sell buildings
+- combat/conquering
+   - two general strategies
+      - boarding (expensive in personnel)
+      - long distance ballistics (expensive in obtanium): maximum distance?
+         - carriers: can be targeted and boarded themselves
 - tidy up visuals pt I
    - background stars
    - planet effects
