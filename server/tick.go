@@ -19,13 +19,13 @@ const (
 	energyPerNasa      = -1000
 	energyPerVale      = -2000
 
-	obtaniumPerVale = 20
-	obtaniumPerHQ   = 10
+	obtaniumPerVale = 15
+	obtaniumPerHQ   = 15
 
 	obtaniumCostPerFarm      = 100
 	obtaniumCostPerGenerator = 200
-	obtaniumCostPerVale      = 800
-	obtaniumCostPerNasa      = 400
+	obtaniumCostPerVale      = 1000
+	obtaniumCostPerNasa      = 500
 
 	operatorsPerFarm      = -1000
 	operatorsPerGenerator = -10000

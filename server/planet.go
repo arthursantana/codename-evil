@@ -13,8 +13,8 @@ type Planet struct {
 	OwnerId int    `json:"ownerId"`
 	Name    string `json:"name"`
 
-	Position [2]int `json:"position"`
-	R        int    `json:"r"`
+	Position [2]float64 `json:"position"`
+	R        int        `json:"r"`
 
 	// resources
 	Workers  int `json:"workers"`
@@ -43,8 +43,8 @@ func (p *Planet) randomize() {
 	p.Name = defaultNames[index]
 	defaultNames = append(defaultNames[:index], defaultNames[index+1:]...)
 
-	p.Position[0] = 50 + rand.Intn(650)
-	p.Position[1] = 50 + rand.Intn(650)
+	p.Position[0] = 50 + float64(rand.Intn(650))
+	p.Position[1] = 50 + float64(rand.Intn(650))
 	p.R = 4 // + rand.Intn(5)
 
 	p.Workers = 5000

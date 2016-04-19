@@ -71,7 +71,7 @@ var Game = React.createClass({
 
    componentDidMount: function () {
       var self = this;
-      socket = new WebSocket("ws://192.168.0.21:8081/ws/");
+      socket = new WebSocket("ws://192.168.0.2:8081/ws/");
 
       socket.onopen = function (event) {
          if (document.cookie == null || document.cookie == 0) {

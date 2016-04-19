@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	workerCostPerColonizer   = 1000
-	cattleCostPerColonizer   = 1000
-	obtaniumCostPerColonizer = 1000
+	workerCostPerColonizer   = 2500
+	cattleCostPerColonizer   = 2500
+	obtaniumCostPerColonizer = 2500
 )
 
 type Ship struct {
@@ -21,8 +21,8 @@ type Ship struct {
 	Type     string `json:"type"`
 	Name     string `json:"name"`
 
-	Position    [2]int  `json:"position"`
-	Destination *Planet `json:"destination"`
+	Position    [2]float64 `json:"position"`
+	Destination *Planet    `json:"destination"`
 }
 
 func shipsJSON(w http.ResponseWriter, ships []Ship) {
@@ -45,7 +45,7 @@ func shipsJSON(w http.ResponseWriter, ships []Ship) {
 func (s *Ship) move() {
 	speed := 2.5
 
-	vector := [2]float64{float64(s.Destination.Position[0] - s.Position[0]), float64(s.Destination.Position[1] - s.Position[1])}
+	vector := [2]float64{s.Destination.Position[0] - s.Position[0], s.Destination.Position[1] - s.Position[1]}
 	norm := math.Sqrt(vector[0]*vector[0] + vector[1]*vector[1])
 
 	if norm <= speed+1 { // reached planet
@@ -72,6 +72,6 @@ func (s *Ship) move() {
 	} else {
 		vector = [2]float64{vector[0] / norm * speed, vector[1] / norm * speed}
 
-		s.Position = [2]int{s.Position[0] + int(vector[0]), s.Position[1] + int(vector[1])}
+		s.Position = [2]float64{s.Position[0] + vector[0], s.Position[1] + vector[1]}
 	}
 }
