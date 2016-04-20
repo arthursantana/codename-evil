@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 )
 
 type Planet struct {
@@ -38,21 +39,24 @@ type Planet struct {
 	EnemyUnitSpace int `json:"enemyUnitSpace"`
 }
 
-var defaultNames = []string{"Big Rock", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Neptune", "Uranus", "Pluto", "Urectum", "Tessia", "Sur'Kesh", "Tuchanka", "Omega", "Palaven", "Rannoch", "3834 Zappafrank", "Omicron Persei 8", "Planet 9 from Outer Space"}
+//var defaultNames = []string{"Big Rock", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Neptune", "Uranus", "Pluto", "Urectum", "Tessia", "Sur'Kesh", "Tuchanka", "Omega", "Palaven", "Rannoch", "3834 Zappafrank", "Omicron Persei 8", "Planet 9 from Outer Space"}
 
 func (p *Planet) randomize() {
-	index := rand.Intn(len(defaultNames))
-	p.Name = defaultNames[index]
-	defaultNames = append(defaultNames[:index], defaultNames[index+1:]...)
+	//index := rand.Intn(len(defaultNames))
+	p.Name = "Big Rock #" + strconv.Itoa(rand.Intn(100000)) //defaultNames[index]
+	//defaultNames = append(defaultNames[:index], defaultNames[index+1:]...)
 
-	p.Position[0] = 50 + float64(rand.Intn(650))
-	p.Position[1] = 50 + float64(rand.Intn(650))
+	width := 1300
+	height := 750
+
+	p.Position[0] = 50 + float64(rand.Intn(width-100))
+	p.Position[1] = 50 + float64(rand.Intn(height-100))
 	p.R = 4 // + rand.Intn(5)
 
-	p.Workers = 10000
-	p.Cattle = 10000
+	p.Workers = 35000
+	p.Cattle = 60000
 	p.Energy = 0
-	p.Obtanium = 2000
+	p.Obtanium = 1000
 
 	p.DockSpace = 10
 	p.UnitSpace = 10
@@ -63,12 +67,11 @@ func (p *Planet) randomize() {
 		p.Buildings[i] = make([]Building, p.R)
 
 		for j := range p.Buildings[i] {
-			p.Buildings[i][j] = Building{"", true}
+			p.Buildings[i][j] = Building{"", true, 0}
 		}
 	}
 
 	p.Buildings[0][0].Type = "hq"
-	p.Buildings[0][0].Operational = true
 
 	p.OwnerId = -1
 }
@@ -91,18 +94,18 @@ func planetsJSON(w http.ResponseWriter, planets []Planet) {
 }
 
 func (p *Planet) combat() {
-	homeFrags := 0
-	awayFrags := 0
+	homeSuccessfulShots := 0
+	awaySuccessfulShots := 0
 
 	for i := range units {
 		if units[i].PlanetId == p.Id {
 			if units[i].OwnerId == p.OwnerId {
 				if units[i].hits() {
-					homeFrags++
+					homeSuccessfulShots++
 				}
 			} else {
 				if units[i].hits() {
-					awayFrags++
+					awaySuccessfulShots++
 				}
 			}
 		}
@@ -113,18 +116,22 @@ func (p *Planet) combat() {
 	for i := range units {
 		if units[i].PlanetId == p.Id {
 			if units[i].OwnerId == p.OwnerId {
-				if awayFrags > 0 {
+				if awaySuccessfulShots > 0 {
 					units[i].PlanetId = -1
 					units[i].OwnerId = -1
-					awayFrags--
+
+					awaySuccessfulShots--
+					p.UnitSpace++
 				} else {
 					anybodyFromHome = true
 				}
 			} else {
-				if homeFrags > 0 {
+				if homeSuccessfulShots > 0 {
 					units[i].PlanetId = -1
 					units[i].OwnerId = -1
-					homeFrags--
+
+					homeSuccessfulShots--
+					p.EnemyUnitSpace++
 				} else {
 					anybodyFromAway = true
 				}

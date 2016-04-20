@@ -5,7 +5,7 @@ body {
    font-family: $font-family;
    background-color: white;
    color: white;
-   font-size: 20px;
+   font-size: 16px;
 }
 
 .unselector {
@@ -14,11 +14,11 @@ body {
    left: 0;
    width: 100%;
    height: 100%;
-   background-color: rgba(128,128,128,0.70);
+   background-color: rgba(60,60,60,0.30);
 }
 
 #starMap {
-   background-color: rgba(5,5,5,0.95);
+   background-color: #111;
    color: white;
    box-shadow: 10px 10px 30px #555;
    border-radius: 5px;
@@ -26,8 +26,8 @@ body {
    top: 50%;
    left: 50%;
    margin-top: -375px;
-   margin-left: -375px;
-   width: 750px;
+   margin-left: -650px;
+   width: 1300px;
    height: 750px;
    display: block;
 }
@@ -37,7 +37,7 @@ body {
 }
 
 @mixin modal {
-   background-color: rgba(20,20,20,0.95);
+   background-color: rgba(20,20,20,0.85);
    color: white;
    box-shadow: 0 0 5px #555;
    border-radius: 5px;
@@ -50,19 +50,19 @@ body {
 @mixin modal-large {
    @include modal;
 
-   height:26em;
-   width:30em;
-   margin-top: -15em;
-   margin-left: -17em;
+   height:36em;
+   width:36em;
+   margin-top: -20em;
+   margin-left: -20em;
 }
 
 @mixin modal-small {
    @include modal;
 
-   height:22em;
-   width:22em;
-   margin-top: -13em;
-   margin-left: -13em;
+   height:26em;
+   width:26em;
+   margin-top: -15em;
+   margin-left: -15em;
 }
 
 #managementInterface {
@@ -133,6 +133,7 @@ body {
       height: 32px;
       width: 32px;
       margin-left: 1em;
+      margin-right: 1em;
       display: inline-block;
    }
 
@@ -207,8 +208,14 @@ body {
    }
 
    .notOperational {
-      background-color: #442222;
+      background-color: #664444;
       background-blend-mode: multiply;
+   }
+
+   .stillBuilding {
+      background-image: url("/static/img/building.png");
+      width: 32px;
+      height: 32px;
    }
 
    #buildingInterface {
@@ -221,6 +228,13 @@ body {
          .resource {
             margin-left: 0;
          }
+      }
+
+      .stillBuilding {
+         background-image: url("/static/img/building.png");
+         width: 32px;
+         height: 32px;
+         display: inline-block;
       }
    }
 }

@@ -84,22 +84,29 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				if planets[m.ParamsBuild.PlanetId].OwnerId == playerId {
 					if planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type == "" {
 						obtaniumCost := 0
+						ticksToBuild := 0
 						switch m.ParamsBuild.Type {
 						case "farm":
 							obtaniumCost = obtaniumCostPerFarm
+							ticksToBuild = ticksToBuildFarm
 						case "generator":
 							obtaniumCost = obtaniumCostPerGenerator
+							ticksToBuild = ticksToBuildGenerator
 						case "nasa":
 							obtaniumCost = obtaniumCostPerNasa
+							ticksToBuild = ticksToBuildNasa
 						case "vale":
 							obtaniumCost = obtaniumCostPerVale
+							ticksToBuild = ticksToBuildVale
 						case "lockheed":
 							obtaniumCost = obtaniumCostPerLockheed
+							ticksToBuild = ticksToBuildLockheed
 						}
 
 						if planets[m.ParamsBuild.PlanetId].Obtanium >= obtaniumCost {
 							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type = m.ParamsBuild.Type
 							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Operational = false
+							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].TicksUntilDone = ticksToBuild
 							planets[m.ParamsBuild.PlanetId].Obtanium -= obtaniumCost
 						} else {
 							// error: not enough obtanium
@@ -133,6 +140,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 					planets[planetId].Obtanium += obtaniumCost / 2
 					planets[planetId].Buildings[x][y].Type = ""
 					planets[planetId].Buildings[x][y].Operational = true
+					planets[planetId].Buildings[x][y].TicksUntilDone = 0
 				} else {
 					// error: not your planet, dagnabbit!
 				}
@@ -157,7 +165,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 						planets[m.ParamsBuildShip.PlanetId].Workers >= workerCost &&
 						planets[m.ParamsBuildShip.PlanetId].Cattle >= cattleCost &&
 						planets[m.ParamsBuildShip.PlanetId].Obtanium >= obtaniumCost {
-						s := Ship{len(ships), playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, nil, 3}
+						s := Ship{len(ships), playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, &planets[m.ParamsBuildShip.PlanetId], nil, 3}
 						ships = append(ships, s)
 
 						planets[m.ParamsBuildShip.PlanetId].Workers -= workerCost
@@ -226,6 +234,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 							if ship.UnitSpace > 0 {
 								unit.PlanetId = -1
 								unit.ShipId = ship.Id
+								planets[ship.PlanetId].UnitSpace++
 								ship.UnitSpace--
 							} else {
 								// error: no space in ship

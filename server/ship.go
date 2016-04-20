@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	workerCostPerColonizer   = 25000
-	cattleCostPerColonizer   = 10000
-	obtaniumCostPerColonizer = 2500
+	workerCostPerColonizer   = 50000
+	cattleCostPerColonizer   = 20000
+	obtaniumCostPerColonizer = 5000
 
 	workerCostPerTrojan   = 0
 	cattleCostPerTrojan   = 0
-	obtaniumCostPerTrojan = 1000
+	obtaniumCostPerTrojan = 2000
 )
 
 type Ship struct {
@@ -26,7 +26,8 @@ type Ship struct {
 	Name     string `json:"name"`
 
 	Position    [2]float64 `json:"position"`
-	Destination *Planet    `json:"destination"`
+	Origin      *Planet    `json:"-"`
+	Destination *Planet    `json:"-"`
 
 	UnitSpace int `json:"unitSpace"`
 }
@@ -49,7 +50,7 @@ func shipsJSON(w http.ResponseWriter, ships []Ship) {
 }
 
 func (s *Ship) move() {
-	speed := 3.0
+	speed := 1.0
 
 	vector := [2]float64{s.Destination.Position[0] - s.Position[0], s.Destination.Position[1] - s.Position[1]}
 	norm := math.Sqrt(vector[0]*vector[0] + vector[1]*vector[1])
@@ -67,36 +68,55 @@ func (s *Ship) move() {
 
 				s.PlanetId = -1
 				s.OwnerId = -1
-			} else { // habited planet, dock (later will behave differently if planet is someone else's)
-				if s.Destination.DockSpace > 0 {
-					s.PlanetId = s.Destination.Id
-					s.OwnerId = s.Destination.OwnerId
-					s.Destination.DockSpace--
-				} else {
-					s.PlanetId = s.Destination.Id
+			} else {
+				if s.Destination.OwnerId == s.OwnerId { // my planet, dock
+					if s.Destination.DockSpace > 0 {
+						s.PlanetId = s.Destination.Id
+						s.OwnerId = s.Destination.OwnerId
+						s.Destination.DockSpace--
+					} else {
+						s.PlanetId = s.Destination.Id
+					}
+				} else { // already colonized, go back
+					s.Destination = s.Origin
 				}
 			}
 		case "trojan":
-			if s.Destination.OwnerId == -1 { // not treated yet
+			if s.Destination.OwnerId == -1 { // empty planet, go back
+				s.Destination = s.Origin
+
 				return
-			}
-
-			if s.Destination.OwnerId == s.OwnerId {
-				s.PlanetId = s.Destination.Id
-			} else {
-				s.PlanetId = s.Destination.Id // TEMPORARY!!!!!!
-
-				for i := range units {
-					if s.Destination.EnemyUnitSpace == 0 {
-						break
-					} else {
-						if units[i].ShipId == s.Id {
-							units[i].PlanetId = s.Destination.Id
-							units[i].ShipId = -1
-							s.Destination.EnemyUnitSpace--
-							s.UnitSpace++
+			} else { // drop them soldiers
+				if s.Destination.OwnerId == s.OwnerId { // my planet, dock
+					for i := range units {
+						if s.Destination.UnitSpace == 0 {
+							break
+						} else {
+							if units[i].ShipId == s.Id {
+								units[i].PlanetId = s.Destination.Id
+								units[i].ShipId = -1
+								s.Destination.UnitSpace--
+								s.UnitSpace++
+							}
 						}
 					}
+
+					s.PlanetId = s.Destination.Id
+				} else {
+					for i := range units {
+						if s.Destination.EnemyUnitSpace == 0 {
+							break
+						} else {
+							if units[i].ShipId == s.Id {
+								units[i].PlanetId = s.Destination.Id
+								units[i].ShipId = -1
+								s.Destination.EnemyUnitSpace--
+								s.UnitSpace++
+							}
+						}
+					}
+
+					s.Destination = s.Origin // not my planet, go back; temporary
 				}
 			}
 		}

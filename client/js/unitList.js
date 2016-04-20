@@ -15,7 +15,7 @@ var UnitList = React.createClass({
                enemyUnitClass = "";
             else
                enemyUnitClass = " enemy";
-            newUnitIcon = <div key={i} data-id={unit.id} className={"unitIcon " + unit.type + enemyUnitClass} title={unit.name} draggable="true" onDragStart={this.handleDragStart}></div>;
+            newUnitIcon = <div key={i} data-id={unit.id} className={"unitIcon " + unit.type + enemyUnitClass} title={unit.type} draggable="true" onDragStart={this.handleDragStart}></div>;
             units.push(newUnitIcon);
          }
       }

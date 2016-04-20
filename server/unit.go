@@ -10,7 +10,7 @@ import (
 
 const (
 	workerCostPerSoldierUnit   = 25000
-	obtaniumCostPerSoldierUnit = 200
+	obtaniumCostPerSoldierUnit = 500
 )
 
 type Unit struct {
@@ -40,7 +40,9 @@ func unitJSON(w http.ResponseWriter, unit []Unit) {
 }
 
 func (u *Unit) hits() bool {
-	effectiveness := 0.05
+	effectiveness := 0.01
 
-	return (rand.Float64() < effectiveness)
+	bingo := rand.Float64()
+
+	return (bingo < effectiveness)
 }

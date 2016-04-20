@@ -79,8 +79,8 @@ var Game = React.createClass({
       socket.onopen = function (event) {
          if (document.cookie == null || document.cookie == 0) {
             var player = {
-               name: prompt("Name:", "Alf"),
-               color: prompt("Color:", "#00ff00"),
+               name: prompt("Name:", ""),
+               color: prompt("Color:", "#005500"),
                points: 0
             }
 

@@ -5,35 +5,43 @@ import (
 )
 
 const (
-	workerFertility                            = 0.05
-	cattleFertility                            = 0.1
+	workerFertility                            = 0.02
+	cattleFertility                            = 0.04
 	mealsPerCow                                = 20
 	cattleReproductionToFoodRateAtStableGrowth = 2
 
-	maxCattlePerHQ   = 60000
-	maxCattlePerFarm = 30000
+	maxCattlePerHQ   = 100000
+	maxCattlePerFarm = 50000
 
-	energyPerHQ        = 100
-	energyPerFarm      = -100
-	energyPerGenerator = 1000
-	energyPerLockheed  = -200
-	energyPerVale      = -2000
-	energyPerNasa      = -1000
+	energyPerHQ = 100
+
+	operatorsPerFarm    = -1000
+	energyPerFarm       = -100
+	obtaniumCostPerFarm = 100
+	ticksToBuildFarm    = 10
+
+	operatorsPerGenerator    = -5000
+	energyPerGenerator       = 1000
+	obtaniumCostPerGenerator = 200
+	ticksToBuildGenerator    = 10
+
+	operatorsPerLockheed    = -10000
+	energyPerLockheed       = -100
+	obtaniumCostPerLockheed = 200
+	ticksToBuildLockheed    = 20
+
+	operatorsPerVale    = -20000
+	energyPerVale       = -2000
+	obtaniumCostPerVale = 1000
+	ticksToBuildVale    = 20
+
+	operatorsPerNasa    = -40000
+	energyPerNasa       = -1000
+	obtaniumCostPerNasa = 500
+	ticksToBuildNasa    = 30
 
 	obtaniumPerVale = 15
-	obtaniumPerHQ   = 15
-
-	obtaniumCostPerFarm      = 100
-	obtaniumCostPerGenerator = 200
-	obtaniumCostPerLockheed  = 200
-	obtaniumCostPerVale      = 1000
-	obtaniumCostPerNasa      = 500
-
-	operatorsPerFarm      = -1000
-	operatorsPerGenerator = -10000
-	operatorsPerLockheed  = -10000
-	operatorsPerVale      = -40000
-	operatorsPerNasa      = -80000
+	obtaniumPerHQ   = 5
 )
 
 func tick() {
@@ -54,9 +62,12 @@ func tick() {
 
 		// count number of operating generators
 		generators := 0
-
 		for j := range planets[i].Buildings {
 			for k := range planets[i].Buildings[j] {
+				if planets[i].Buildings[j][k].TicksUntilDone > 0 { // still being built
+					continue
+				}
+
 				if planets[i].Buildings[j][k].Type == "generator" {
 					planets[i].BusyWorkers -= operatorsPerGenerator
 					if freeWorkers > -1*operatorsPerGenerator {
@@ -71,16 +82,20 @@ func tick() {
 			}
 		}
 
-		// count number of buildings (except generators and HQ)
+		// count number of buildings
+		planets[i].Energy = energyPerGenerator*generators + energyPerHQ
+		freeEnergy := planets[i].Energy
 		farms := 0
 		vales := 0
 		nasas := 0
-		planets[i].Energy = energyPerGenerator*generators + energyPerHQ
-		freeEnergy := planets[i].Energy
 		dummy := 0
 		count := &dummy
 		for j := range planets[i].Buildings {
 			for k := range planets[i].Buildings[j] {
+				if planets[i].Buildings[j][k].TicksUntilDone > 0 { // still being built
+					continue
+				}
+
 				operatorsPerThing := 0
 				energyPerThing := 0
 				switch planets[i].Buildings[j][k].Type {
@@ -118,6 +133,17 @@ func tick() {
 						planets[i].NotEnoughEnergy = true
 					}
 					planets[i].Buildings[j][k].Operational = false
+				}
+			}
+		}
+
+		// build
+	Loop:
+		for j := range planets[i].Buildings {
+			for k := range planets[i].Buildings[j] {
+				if planets[i].Buildings[j][k].TicksUntilDone > 0 { // still being built
+					planets[i].Buildings[j][k].TicksUntilDone--
+					break Loop
 				}
 			}
 		}

@@ -33,19 +33,19 @@
       % basic soldiers
       % basic transporting and boarding interface
       % basic combat rules
-- make ships go back to origin when applicable: invalid destination
-- make ships in other peoples' planets be usable
-- building cost/time?
-   - HQ is busy building something: can't build two buildings/upgrades at the same time (future upgrade?)
-   - nasa and lockheed do not build units instantly
-      - queue?
+% make ships go back to origin when applicable: invalid destination
+% buildings should not be built instantly
+- units should not be trained instantly
 - tidy up visuals pt I
    - background stars
    - planet effects
 - content part I
    - upgrades
+      - additional hq build queue
+      - more efficient shit: specialization on hq, can't do more than one
    - planet effects
       - different sizes
+   - alliances: allow friendly units from other players
    - tech tree?
    - combat/conquering pt II
          - long distance ballistics (expensive in obtanium): maximum distance?
@@ -67,6 +67,7 @@
 === extra
 - units should consume food too
    - what if they're in ships? what if they're docked?
+- make ships in other peoples' planets be usable: e.g. rescue dudes losing a battle
 - server (handleWebsocket) should test if things exists before trying to access stuff like ship[params.shipId]
 - server should not create buildings with inexistent types!
 - client should recommend good numbers of crew and cargo

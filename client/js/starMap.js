@@ -1,3 +1,5 @@
+var planetScale = 5
+
 var StarMap = React.createClass({
    drawPlanets: function () {
       if (!this.props.planets || !this.props.players)
@@ -10,7 +12,7 @@ var StarMap = React.createClass({
       for (var i = 0; i < this.props.planets.length; i++) {
          var p = this.props.planets[i];
 
-         r = 3*p.r;
+         r = planetScale*p.r;
 
          ctx.beginPath();
          ctx.arc(p.position[0], p.position[1], r, 0, 2*Math.PI, false);
@@ -50,7 +52,7 @@ var StarMap = React.createClass({
          ctx.stroke();
          ctx.fill();
          ctx.fillStyle = "white";
-         ctx.fillText(capitalize(s.type) + " " + s.name,s.position[0],s.position[1]+r+20);
+         ctx.fillText(s.type,s.position[0],s.position[1]+r+20);
       }
    },
 
@@ -64,7 +66,7 @@ var StarMap = React.createClass({
 
          dx = x-p.position[0];
          dy = y-p.position[1];
-         r = 3*p.r;
+         r = planetScale*p.r;
 
          if (dx*dx + dy*dy < r*r) {
             if (this.props.selectedShip == null) {
@@ -96,7 +98,7 @@ var StarMap = React.createClass({
       if (this.props.planets == null || this.props.players == null)
          return null;
 
-      return <canvas ref="canvas" id="starMap" className={voyageModeClass} width="750" height="750" onClick={this.clickHandler}></canvas>;
+      return <canvas ref="canvas" id="starMap" className={voyageModeClass} width="1300" height="750" onClick={this.clickHandler}></canvas>;
    },
 
    componentDidUpdate: function () {
