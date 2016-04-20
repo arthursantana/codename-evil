@@ -18,7 +18,7 @@ gulp.task('css', function () {
 });
 
 gulp.task('img', function () {
-   gulp.src(['art/buildings/*.png', 'art/resources/*.png', 'art/ships/*.png'])
+   gulp.src(['art/buildings/*.png', 'art/resources/*.png', 'art/units/*.png'])
    .pipe(gulp.dest('dist/static/img'))
 });
 
@@ -45,7 +45,7 @@ gulp.task('libs', function () {
 gulp.task('default', ['html', 'css', 'img', 'js', 'libs']);
 
 gulp.task('watch', function () {
-   gulp.watch(['client/*', 'client/*/*', 'gulpfile.js'], ['default'])
+   gulp.watch(['client/*', 'client/*/*', 'gulpfile.js', 'art'], ['default'])
 });
 
 //gulp.task('node_modules', function () {

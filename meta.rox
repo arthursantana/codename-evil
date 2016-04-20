@@ -28,21 +28,32 @@
 === week 3
 % sell buildings
 % position has to be float: int is too sensitive to truncations: can't move on angles which are weird fractions
-- combat/conquering
-   - two general strategies
-      - boarding (expensive in personnel)
-      - long distance ballistics (expensive in obtanium): maximum distance?
-         - carriers: can be targeted and boarded themselves
+% combat/conquering pt I
+   % boarding (expensive in personnel)
+      % basic soldiers
+      % basic transporting and boarding interface
+      % basic combat rules
+- make ships go back to origin when applicable: invalid destination
+- make ships in other peoples' planets be usable
 - building cost/time?
-   - HQ is busy building something: can't build two things at the same time (future upgrade?)
+   - HQ is busy building something: can't build two buildings/upgrades at the same time (future upgrade?)
+   - nasa and lockheed do not build units instantly
+      - queue?
 - tidy up visuals pt I
    - background stars
    - planet effects
 - content part I
+   - upgrades
    - planet effects
       - different sizes
-   - upgrades
-   - ships
+   - tech tree?
+   - combat/conquering pt II
+         - long distance ballistics (expensive in obtanium): maximum distance?
+            - carriers: can be targeted and boarded themselves
+         - fighters? ways to destroy ships before they land?
+   - ships and unit
+      - more combat ships and units
+      - more support ships and units? scouts/spies, commerce, propagandists, whatever
 - balance: make it fun with varied viable strats
    - empty squares generate resources
    - limit obtanium per planet: promotes non-turtling
@@ -54,6 +65,10 @@
 === week 4
 - persist
 === extra
+- units should consume food too
+   - what if they're in ships? what if they're docked?
+- server (handleWebsocket) should test if things exists before trying to access stuff like ship[params.shipId]
+- server should not create buildings with inexistent types!
 - client should recommend good numbers of crew and cargo
 - horrible hack: ships who disappear become owned by user -1
 - content part II

@@ -33,7 +33,9 @@ type Planet struct {
 
 	Buildings [][]Building `json:"buildings"`
 
-	DockSpace int `json:"dockSpace"`
+	DockSpace      int `json:"dockSpace"`
+	UnitSpace      int `json:"unitSpace"`
+	EnemyUnitSpace int `json:"enemyUnitSpace"`
 }
 
 var defaultNames = []string{"Big Rock", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Neptune", "Uranus", "Pluto", "Urectum", "Tessia", "Sur'Kesh", "Tuchanka", "Omega", "Palaven", "Rannoch", "3834 Zappafrank", "Omicron Persei 8", "Planet 9 from Outer Space"}
@@ -47,12 +49,17 @@ func (p *Planet) randomize() {
 	p.Position[1] = 50 + float64(rand.Intn(650))
 	p.R = 4 // + rand.Intn(5)
 
-	p.Workers = 5000
-	p.Cattle = 5000
+	//p.Workers = 10000
+	//p.Cattle = 10000
+	p.Workers = 50000
+	p.Cattle = 50000
 	p.Energy = 0
-	p.Obtanium = 2000
+	//p.Obtanium = 2000
+	p.Obtanium = 20000
 
-	p.DockSpace = 5
+	p.DockSpace = 10
+	p.UnitSpace = 10
+	p.EnemyUnitSpace = 10
 
 	p.Buildings = make([][]Building, p.R)
 	for i := range p.Buildings {
@@ -84,4 +91,58 @@ func planetsJSON(w http.ResponseWriter, planets []Planet) {
 		separator = ",\n"
 	}
 	fmt.Fprintf(w, "]")
+}
+
+func (p *Planet) combat() {
+	homeFrags := 0
+	awayFrags := 0
+
+	for i := range units {
+		if units[i].PlanetId == p.Id {
+			if units[i].OwnerId == p.OwnerId {
+				if units[i].hits() {
+					homeFrags++
+				}
+			} else {
+				if units[i].hits() {
+					awayFrags++
+				}
+			}
+		}
+	}
+
+	anybodyFromHome := false
+	anybodyFromAway := false
+	for i := range units {
+		if units[i].PlanetId == p.Id {
+			if units[i].OwnerId == p.OwnerId {
+				if awayFrags > 0 {
+					units[i].PlanetId = -1
+					units[i].OwnerId = -1
+					awayFrags--
+				} else {
+					anybodyFromHome = true
+				}
+			} else {
+				if homeFrags > 0 {
+					units[i].PlanetId = -1
+					units[i].OwnerId = -1
+					homeFrags--
+				} else {
+					anybodyFromAway = true
+				}
+			}
+		}
+	}
+
+	if anybodyFromAway && !anybodyFromHome { // conquest!
+		for i := range units {
+			if units[i].PlanetId == p.Id {
+				if units[i].OwnerId != p.OwnerId {
+					p.OwnerId = units[i].OwnerId
+					break
+				}
+			}
+		}
+	}
 }

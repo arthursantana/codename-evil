@@ -10,7 +10,7 @@ var StarMap = React.createClass({
       for (var i = 0; i < this.props.planets.length; i++) {
          var p = this.props.planets[i];
 
-         r = 2*p.r;
+         r = 3*p.r;
 
          ctx.beginPath();
          ctx.arc(p.position[0], p.position[1], r, 0, 2*Math.PI, false);
@@ -40,7 +40,7 @@ var StarMap = React.createClass({
          if (s.planetId != -1 || s.ownerId == -1)
             continue;
 
-         var r = 2;
+         var r = 1;
 
          ctx.beginPath();
          ctx.arc(s.position[0], s.position[1], r, 0, 2*Math.PI, false);
@@ -50,7 +50,7 @@ var StarMap = React.createClass({
          ctx.stroke();
          ctx.fill();
          ctx.fillStyle = "white";
-         ctx.fillText(s.name,s.position[0],s.position[1]+r+20);
+         ctx.fillText(capitalize(s.type) + " " + s.name,s.position[0],s.position[1]+r+20);
       }
    },
 
@@ -64,7 +64,7 @@ var StarMap = React.createClass({
 
          dx = x-p.position[0];
          dy = y-p.position[1];
-         r = 2*p.r;
+         r = 3*p.r;
 
          if (dx*dx + dy*dy < r*r) {
             if (this.props.selectedShip == null) {

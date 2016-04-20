@@ -59,10 +59,10 @@ body {
 @mixin modal-small {
    @include modal;
 
-   height:18em;
-   width:20em;
-   margin-top: -11em;
-   margin-left: -12em;
+   height:22em;
+   width:22em;
+   margin-top: -13em;
+   margin-left: -13em;
 }
 
 #managementInterface {
@@ -92,9 +92,37 @@ body {
       }
    }
 
-   #shipList {
-      margin-top: 2em;
+   #shipList, #unitList {
+      margin: 1em 0;
+
+      .unitIcon {
+         cursor: move;
+      }
    }
+
+   .shipIcon, .unitIcon {
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: inline-block
+   }
+
+   .enemy {
+      float: right;
+   }
+
+   .colonizer {
+      background-image: url("/static/img/colonizer.png");
+   }
+
+   .trojan {
+      background-image: url("/static/img/trojan.png");
+   }
+
+   .soldier {
+      background-image: url("/static/img/soldier.png");
+   }
+
 
    #resourceList {
       float: right;
@@ -174,14 +202,8 @@ body {
       background-image: url("/static/img/vale.png");
    }
 
-   .shipIcon {
-      width: 32px;
-      height: 32px;
-      display: inline-block
-   }
-
-   .colonizer {
-      background-image: url("/static/img/colonizer.png");
+   .lockheed {
+      background-image: url("/static/img/lockheed.png");
    }
 
    .notOperational {
@@ -192,7 +214,7 @@ body {
    #buildingInterface {
       @include modal-small;
 
-      .buildingCosts, .shipCosts {
+      .buildingCosts, .unitCosts {
          float: right;
          text-align: right;
 

@@ -93,6 +93,8 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 							obtaniumCost = obtaniumCostPerNasa
 						case "vale":
 							obtaniumCost = obtaniumCostPerVale
+						case "lockheed":
+							obtaniumCost = obtaniumCostPerLockheed
 						}
 
 						if planets[m.ParamsBuild.PlanetId].Obtanium >= obtaniumCost {
@@ -108,6 +110,32 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				} else {
 					// error: trying to build in somebody else's planet
 				}
+			case "sellBuilding":
+				planetId := m.ParamsSellBuilding.PlanetId
+				x := m.ParamsSellBuilding.I
+				y := m.ParamsSellBuilding.J
+
+				if planets[planetId].OwnerId == playerId && planets[planetId].Buildings[x][y].Type != "hq" {
+					obtaniumCost := 0
+					switch planets[planetId].Buildings[x][y].Type {
+					case "farm":
+						obtaniumCost = obtaniumCostPerFarm
+					case "generator":
+						obtaniumCost = obtaniumCostPerGenerator
+					case "nasa":
+						obtaniumCost = obtaniumCostPerNasa
+					case "vale":
+						obtaniumCost = obtaniumCostPerVale
+					case "lockheed":
+						obtaniumCost = obtaniumCostPerLockheed
+					}
+
+					planets[planetId].Obtanium += obtaniumCost / 2
+					planets[planetId].Buildings[x][y].Type = ""
+					planets[planetId].Buildings[x][y].Operational = true
+				} else {
+					// error: not your planet, dagnabbit!
+				}
 			case "buildShip":
 				if planets[m.ParamsBuildShip.PlanetId].OwnerId == playerId {
 					workerCost := 0
@@ -119,19 +147,49 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 						workerCost = workerCostPerColonizer
 						cattleCost = cattleCostPerColonizer
 						obtaniumCost = obtaniumCostPerColonizer
+					case "trojan":
+						workerCost = workerCostPerTrojan
+						cattleCost = cattleCostPerTrojan
+						obtaniumCost = obtaniumCostPerTrojan
 					}
 
 					if planets[m.ParamsBuildShip.PlanetId].DockSpace > 0 &&
 						planets[m.ParamsBuildShip.PlanetId].Workers >= workerCost &&
 						planets[m.ParamsBuildShip.PlanetId].Cattle >= cattleCost &&
 						planets[m.ParamsBuildShip.PlanetId].Obtanium >= obtaniumCost {
-						s := Ship{len(ships), playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, nil}
+						s := Ship{len(ships), playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, nil, 3}
 						ships = append(ships, s)
 
 						planets[m.ParamsBuildShip.PlanetId].Workers -= workerCost
 						planets[m.ParamsBuildShip.PlanetId].Cattle -= cattleCost
 						planets[m.ParamsBuildShip.PlanetId].Obtanium -= obtaniumCost
 						planets[m.ParamsBuildShip.PlanetId].DockSpace--
+					} else {
+						// error: not enough space or obtanium
+					}
+				} else {
+					// error: trying to build in somebody else's planet
+				}
+			case "trainUnit":
+				if planets[m.ParamsTrainUnit.PlanetId].OwnerId == playerId {
+					workerCost := 0
+					obtaniumCost := 0
+
+					switch m.ParamsTrainUnit.Type {
+					case "soldier":
+						workerCost = workerCostPerSoldierUnit
+						obtaniumCost = obtaniumCostPerSoldierUnit
+					}
+
+					if planets[m.ParamsTrainUnit.PlanetId].UnitSpace > 0 &&
+						planets[m.ParamsTrainUnit.PlanetId].Workers >= workerCost &&
+						planets[m.ParamsTrainUnit.PlanetId].Obtanium >= obtaniumCost {
+						u := Unit{len(units), playerId, m.ParamsTrainUnit.PlanetId, -1, m.ParamsTrainUnit.Type, m.ParamsTrainUnit.Name}
+						units = append(units, u)
+
+						planets[m.ParamsTrainUnit.PlanetId].Workers -= workerCost
+						planets[m.ParamsTrainUnit.PlanetId].Obtanium -= obtaniumCost
+						planets[m.ParamsTrainUnit.PlanetId].UnitSpace--
 					} else {
 						// error: not enough space or obtanium
 					}
@@ -158,29 +216,28 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				} else {
 					// error: trying to fly somebody else's ship
 				}
-			case "sellBuilding":
-				planetId := m.ParamsSellBuilding.PlanetId
-				x := m.ParamsSellBuilding.I
-				y := m.ParamsSellBuilding.J
+			case "boardShip":
+				unit := &units[m.ParamsBoardShip.UnitId]
+				ship := &ships[m.ParamsBoardShip.ShipId]
 
-				if planets[planetId].OwnerId == playerId && planets[planetId].Buildings[x][y].Type != "hq" {
-					obtaniumCost := 0
-					switch planets[planetId].Buildings[x][y].Type {
-					case "farm":
-						obtaniumCost = obtaniumCostPerFarm
-					case "generator":
-						obtaniumCost = obtaniumCostPerGenerator
-					case "nasa":
-						obtaniumCost = obtaniumCostPerNasa
-					case "vale":
-						obtaniumCost = obtaniumCostPerVale
+				if ship.OwnerId == playerId {
+					if unit.OwnerId == playerId {
+						if ship.PlanetId == unit.PlanetId {
+							if ship.UnitSpace > 0 {
+								unit.PlanetId = -1
+								unit.ShipId = ship.Id
+								ship.UnitSpace--
+							} else {
+								// error: no space in ship
+							}
+						} else {
+							// error: ship and unit not at the same place
+						}
+					} else {
+						// error: trying to board with somebody else's units
 					}
-
-					planets[planetId].Obtanium += obtaniumCost / 2
-					planets[planetId].Buildings[x][y].Type = ""
-					planets[planetId].Buildings[x][y].Operational = true
 				} else {
-					// error: not your planet, dagnabbit!
+					// error: trying to board somebody else's ship
 				}
 			case "changePlanetName":
 				planetId := m.ParamsChangePlanetName.Id

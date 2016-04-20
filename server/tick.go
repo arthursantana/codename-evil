@@ -14,23 +14,26 @@ const (
 	maxCattlePerFarm = 30000
 
 	energyPerHQ        = 100
-	energyPerGenerator = 1000
 	energyPerFarm      = -100
-	energyPerNasa      = -1000
+	energyPerGenerator = 1000
+	energyPerLockheed  = -200
 	energyPerVale      = -2000
+	energyPerNasa      = -1000
 
 	obtaniumPerVale = 15
 	obtaniumPerHQ   = 15
 
 	obtaniumCostPerFarm      = 100
 	obtaniumCostPerGenerator = 200
+	obtaniumCostPerLockheed  = 200
 	obtaniumCostPerVale      = 1000
 	obtaniumCostPerNasa      = 500
 
 	operatorsPerFarm      = -1000
 	operatorsPerGenerator = -10000
-	operatorsPerVale      = -50000
-	operatorsPerNasa      = -100000
+	operatorsPerLockheed  = -10000
+	operatorsPerVale      = -40000
+	operatorsPerNasa      = -80000
 )
 
 func tick() {
@@ -87,6 +90,10 @@ func tick() {
 					operatorsPerThing = operatorsPerFarm
 					energyPerThing = energyPerFarm
 					count = &farms
+				case "lockheed":
+					operatorsPerThing = operatorsPerLockheed
+					energyPerThing = energyPerLockheed
+					count = &dummy
 				case "vale":
 					operatorsPerThing = operatorsPerVale
 					energyPerThing = energyPerVale
@@ -146,9 +153,16 @@ func tick() {
 		planets[i].Obtanium += obtaniumPerVale*vales + obtaniumPerHQ
 
 		// move ships
-		for i := 0; i < len(ships); i++ {
+		for i := range ships {
 			if ships[i].PlanetId == -1 && ships[i].OwnerId != -1 { // ship is not docked and is alive
 				ships[i].move()
+			}
+		}
+
+		// combat
+		for i := range planets {
+			if planets[i].OwnerId != -1 {
+				planets[i].combat()
 			}
 		}
 	}

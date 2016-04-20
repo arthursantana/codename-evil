@@ -5,6 +5,8 @@ var Game = React.createClass({
       return {
          players: null,
          planets: null,
+         ships: null,
+         units: null,
          selectedShip: null,
          selectedPlanet: null
       };
@@ -51,6 +53,7 @@ var Game = React.createClass({
                players: answer.players,
                planets: answer.planets,
                ships: answer.ships,
+               units: answer.units,
                selectedPlanet: selectedPlanet
             });
          },
@@ -64,14 +67,14 @@ var Game = React.createClass({
       return (
          <div>
             <StarMap planets={this.state.planets} players={this.state.players} ships={this.state.ships} setSelectedPlanet={this.setSelectedPlanet} selectedShip={this.state.selectedShip} quitSetVoyageMode={this.quitSetVoyageMode} />
-            <ManagementInterface planets={this.state.planets} players={this.state.players} ships={this.state.ships} selectedPlanet={this.state.selectedPlanet} unselectPlanet={this.unselectPlanet} enterSetVoyageMode={this.enterSetVoyageMode} />
+            <ManagementInterface planets={this.state.planets} players={this.state.players} ships={this.state.ships} units={this.state.units} selectedPlanet={this.state.selectedPlanet} unselectPlanet={this.unselectPlanet} enterSetVoyageMode={this.enterSetVoyageMode} />
          </div>
       );
    },
 
    componentDidMount: function () {
       var self = this;
-      socket = new WebSocket("ws://192.168.0.2:8081/ws/");
+      socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/ws/");
 
       socket.onopen = function (event) {
          if (document.cookie == null || document.cookie == 0) {

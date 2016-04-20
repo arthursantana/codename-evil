@@ -12,6 +12,7 @@ var lastDataUpdate int64
 var planets []Planet
 var players []Player
 var ships []Ship
+var units []Unit
 
 func main() {
 	var (
@@ -59,6 +60,8 @@ func main() {
 		playersJSON(w, players)
 		fmt.Fprintf(w, ",\n\n")
 		shipsJSON(w, ships)
+		fmt.Fprintf(w, ",\n\n")
+		unitJSON(w, units)
 		fmt.Fprintf(w, "\n\n}")
 	})
 

@@ -18,7 +18,20 @@ var BuildingInterface = React.createClass({
          command: "buildShip",
          paramsBuildShip: {
             type: type,
-            name: prompt("Ship name", "S.S. Enterprise"),
+            name: prompt("Ship name", ""),
+            planetId: this.props.planet.id,
+         }
+      }));
+
+      this.props.unselectBuilding();
+   },
+
+   trainUnit: function(type) {
+      socket.send(JSON.stringify({
+         command: "trainUnit",
+         paramsTrainUnit: {
+            type: type,
+            name: prompt("Unit name", ""),
             planetId: this.props.planet.id,
          }
       }));
@@ -74,18 +87,27 @@ var BuildingInterface = React.createClass({
                      <div className="tile vale" title={buildingTitle("vale")} onClick={this.build.bind(this, "vale")} ></div>
                      Vale
                      <div className="buildingCosts">
-                        50k <span className="resource workers" title="Workers"></span>
+                        25 <span className="resource workers" title="Workers"></span>
                         2k <span className="resource energy" title="Energy"></span>
-                        800 <span className="resource obtanium" title="Obtanium"></span>
+                        1k <span className="resource obtanium" title="Obtanium"></span>
                      </div>
                   </div>
                   <div>
                      <div className="tile nasa" title={buildingTitle("nasa")} onClick={this.build.bind(this, "nasa")} ></div>
                      Nasa
                      <div className="buildingCosts">
-                        100k <span className="resource workers" title="Workers"></span>
+                        50k <span className="resource workers" title="Workers"></span>
                         1k <span className="resource energy" title="Energy"></span>
-                        400 <span className="resource obtanium" title="Obtanium"></span>
+                        500 <span className="resource obtanium" title="Obtanium"></span>
+                     </div>
+                  </div>
+                  <div>
+                     <div className="tile lockheed" title={buildingTitle("lockheed")} onClick={this.build.bind(this, "lockheed")} ></div>
+                     Lockheed
+                     <div className="buildingCosts">
+                        10k <span className="resource workers" title="Workers"></span>
+                        200 <span className="resource energy" title="Energy"></span>
+                        200 <span className="resource obtanium" title="Obtanium"></span>
                      </div>
                   </div>
                </div>
@@ -94,12 +116,32 @@ var BuildingInterface = React.createClass({
             interfaceBody = (
                <div>
                   <div>
-                     <div className="shipIcon colonizer" onClick={this.buildShip.bind(this,"colonizer")}></div>
+                     <div className="unitIcon colonizer" onClick={this.buildShip.bind(this,"colonizer")}></div>
                      Colonizer
-                     <div className="shipCosts">
-                        2.5k <span className="resource workers" title="Workers"></span>
-                        2.5k <span className="resource cattle" title="Cattle"></span>
+                     <div className="unitCosts">
+                        25k <span className="resource workers" title="Workers"></span>
+                        10k <span className="resource cattle" title="Cattle"></span>
                         2.5k <span className="resource obtanium" title="Obtanium"></span>
+                     </div>
+                  </div>
+                  <div>
+                     <div className="unitIcon trojan" onClick={this.buildShip.bind(this,"trojan")}></div>
+                     Trojan
+                     <div className="unitCosts">
+                        1k <span className="resource obtanium" title="Obtanium"></span>
+                     </div>
+                  </div>
+               </div>
+            );
+         } else if (b.type == "lockheed") {
+            interfaceBody = (
+               <div>
+                  <div>
+                     <div className="unitIcon soldier" onClick={this.trainUnit.bind(this,"soldier")}></div>
+                     Soldier Unit
+                     <div className="unitCosts">
+                        25k <span className="resource workers" title="Workers"></span>
+                        200 <span className="resource obtanium" title="Obtanium"></span>
                      </div>
                   </div>
                </div>
