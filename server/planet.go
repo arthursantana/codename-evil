@@ -49,13 +49,10 @@ func (p *Planet) randomize() {
 	p.Position[1] = 50 + float64(rand.Intn(650))
 	p.R = 4 // + rand.Intn(5)
 
-	//p.Workers = 10000
-	//p.Cattle = 10000
-	p.Workers = 50000
-	p.Cattle = 50000
+	p.Workers = 10000
+	p.Cattle = 10000
 	p.Energy = 0
-	//p.Obtanium = 2000
-	p.Obtanium = 20000
+	p.Obtanium = 2000
 
 	p.DockSpace = 10
 	p.UnitSpace = 10
