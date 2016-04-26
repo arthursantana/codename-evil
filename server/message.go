@@ -33,12 +33,16 @@ type ParamsTrainUnit struct {
 	Type     string `json:"type"`
 	Name     string `json:"name"`
 	PlanetId int    `json:"planetId"`
+	I        int    `json:"i"`
+	J        int    `json:"j"`
 }
 
 type ParamsBuildShip struct {
 	Type     string `json:"type"`
 	Name     string `json:"name"`
 	PlanetId int    `json:"planetId"`
+	I        int    `json:"i"`
+	J        int    `json:"j"`
 }
 
 type ParamsSetVoyage struct {

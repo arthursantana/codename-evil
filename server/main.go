@@ -9,10 +9,10 @@ import (
 )
 
 var lastDataUpdate int64
-var planets []Planet
-var players []Player
-var ships []Ship
-var units []Unit
+var planets PlanetList
+var players PlayerList
+var ships ShipList
+var units UnitList
 
 func main() {
 	var (
@@ -54,15 +54,15 @@ func main() {
 	})
 
 	http.HandleFunc("/data/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "{\n\n")
-		planetsJSON(w, planets)
-		fmt.Fprintf(w, ",\n\n")
-		playersJSON(w, players)
-		fmt.Fprintf(w, ",\n\n")
-		shipsJSON(w, ships)
-		fmt.Fprintf(w, ",\n\n")
-		unitJSON(w, units)
-		fmt.Fprintf(w, "\n\n}")
+		fmt.Fprintf(w, "{")
+		planets.writeJSON(w)
+		fmt.Fprintf(w, ",")
+		players.writeJSON(w)
+		fmt.Fprintf(w, ",")
+		ships.writeJSON(w)
+		fmt.Fprintf(w, ",")
+		units.writeJSON(w)
+		fmt.Fprintf(w, "}")
 	})
 
 	http.HandleFunc("/ws/", handleWebsocket)

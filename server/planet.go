@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"strconv"
 )
 
 type Planet struct {
@@ -39,12 +38,12 @@ type Planet struct {
 	EnemyUnitSpace int `json:"enemyUnitSpace"`
 }
 
-//var defaultNames = []string{"Big Rock", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Neptune", "Uranus", "Pluto", "Urectum", "Tessia", "Sur'Kesh", "Tuchanka", "Omega", "Palaven", "Rannoch", "3834 Zappafrank", "Omicron Persei 8", "Planet 9 from Outer Space"}
+var defaultNames = []string{"Big Rock", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Neptune", "Uranus", "Pluto", "Urectum", "Tessia", "Sur'Kesh", "Tuchanka", "Omega", "Palaven", "Rannoch", "3834 Zappafrank", "Omicron Persei 8", "Planet 9 from Outer Space"}
 
 func (p *Planet) randomize() {
-	//index := rand.Intn(len(defaultNames))
-	p.Name = "Big Rock #" + strconv.Itoa(rand.Intn(100000)) //defaultNames[index]
-	//defaultNames = append(defaultNames[:index], defaultNames[index+1:]...)
+	index := rand.Intn(len(defaultNames))
+	p.Name = defaultNames[index]
+	defaultNames = append(defaultNames[:index], defaultNames[index+1:]...)
 
 	width := 1300
 	height := 750
@@ -67,7 +66,7 @@ func (p *Planet) randomize() {
 		p.Buildings[i] = make([]Building, p.R)
 
 		for j := range p.Buildings[i] {
-			p.Buildings[i][j] = Building{"", true, 0}
+			p.Buildings[i][j] = Building{"", true, 0, 0, []string{}}
 		}
 	}
 
@@ -76,7 +75,9 @@ func (p *Planet) randomize() {
 	p.OwnerId = -1
 }
 
-func planetsJSON(w http.ResponseWriter, planets []Planet) {
+type PlanetList []Planet
+
+func (planets PlanetList) writeJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, "\"planets\": [")
 	separator := ""
 	for i := range planets {

@@ -12,10 +12,12 @@ const (
 	workerCostPerColonizer   = 50000
 	cattleCostPerColonizer   = 20000
 	obtaniumCostPerColonizer = 5000
+	ticksToBuildColonizer    = 30
 
 	workerCostPerTrojan   = 0
 	cattleCostPerTrojan   = 0
 	obtaniumCostPerTrojan = 2000
+	ticksToBuildTrojan    = 20
 )
 
 type Ship struct {
@@ -32,7 +34,9 @@ type Ship struct {
 	UnitSpace int `json:"unitSpace"`
 }
 
-func shipsJSON(w http.ResponseWriter, ships []Ship) {
+type ShipList []Ship
+
+func (ships ShipList) writeJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, "\"ships\": [")
 	separator := ""
 	for i := range ships {

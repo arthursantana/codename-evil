@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	workerCostPerSoldierUnit   = 25000
+	workerCostPerSoldierUnit   = 5000
 	obtaniumCostPerSoldierUnit = 500
+	ticksToBuildSoldier        = 10
 )
 
 type Unit struct {
@@ -22,7 +23,9 @@ type Unit struct {
 	Name     string `json:"name"`
 }
 
-func unitJSON(w http.ResponseWriter, unit []Unit) {
+type UnitList []Unit
+
+func (unit UnitList) writeJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, "\"units\": [")
 	separator := ""
 	for i := range unit {

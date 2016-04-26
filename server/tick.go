@@ -26,9 +26,9 @@ const (
 	ticksToBuildGenerator    = 10
 
 	operatorsPerLockheed    = -15000
-	energyPerLockheed       = -100
+	energyPerLockheed       = -500
 	obtaniumCostPerLockheed = 200
-	ticksToBuildLockheed    = 30
+	ticksToBuildLockheed    = 10
 
 	operatorsPerVale    = -20000
 	energyPerVale       = -2000
@@ -59,6 +59,17 @@ func tick() {
 		planets[i].NotEnoughCattle = false
 		planets[i].NotEnoughEnergy = false
 		planets[i].NotEnoughFarms = false
+
+		// build buildings
+	Loop:
+		for j := range planets[i].Buildings {
+			for k := range planets[i].Buildings[j] {
+				if planets[i].Buildings[j][k].TicksUntilDone > 0 { // still being built
+					planets[i].Buildings[j][k].TicksUntilDone--
+					break Loop
+				}
+			}
+		}
 
 		// count number of operating generators
 		generators := 0
@@ -137,13 +148,31 @@ func tick() {
 			}
 		}
 
-		// build
-	Loop:
+		// build units and ships
 		for j := range planets[i].Buildings {
 			for k := range planets[i].Buildings[j] {
-				if planets[i].Buildings[j][k].TicksUntilDone > 0 { // still being built
-					planets[i].Buildings[j][k].TicksUntilDone--
-					break Loop
+				if planets[i].Buildings[j][k].Operational && planets[i].Buildings[j][k].TicksUntilProductionDone > 0 {
+					planets[i].Buildings[j][k].TicksUntilProductionDone--
+
+					if planets[i].Buildings[j][k].TicksUntilProductionDone == 0 {
+						// deliver unit built
+
+						switch planets[i].Buildings[j][k].Type {
+						case "lockheed":
+							u := Unit{len(units), planets[i].OwnerId, planets[i].Id, -1, planets[i].Buildings[j][k].ProductionQueue[0], "noname"}
+							units = append(units, u)
+						case "nasa":
+							s := Ship{len(ships), planets[i].OwnerId, planets[i].Id, planets[i].Buildings[j][k].ProductionQueue[0], "noname", planets[i].Position, &planets[i], nil, 3}
+							ships = append(ships, s)
+						}
+						planets[i].Buildings[j][k].ProductionQueue = planets[i].Buildings[j][k].ProductionQueue[1:]
+
+						if len(planets[i].Buildings[j][k].ProductionQueue) > 0 {
+							planets[i].Buildings[j][k].TicksUntilProductionDone = ticksToBuildSoldier
+						} else {
+							planets[i].Buildings[j][k].TicksUntilProductionDone = 0 // not building anything
+						}
+					}
 				}
 			}
 		}

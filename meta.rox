@@ -35,7 +35,16 @@
       % basic combat rules
 % make ships go back to origin when applicable: invalid destination
 % buildings should not be built instantly
-- units should not be trained instantly: queue
+% units should not be trained instantly: queue
+- refactor server
+   - server should answer all messages, at least with 'ok' or 'fail', etc
+   - client should receive data directly from tick
+   - horrible long names in variables in handleWebsockets: create shortcuts
+   - unit -> landUnit; interface Unit which is used by a single buildUnit command, implemented by LandUnit and Ship
+   - modularize commands: handleWebsocket should only talk about network, call methods to do the work
+   - map[string]stuff: all balance data should be in a big table indexed by type (later enums)
+      - client should get costs from server (only one place to change values)
+   - removed units/ships really be removed: pay attention to the fact that the list changing will break the tick loop
 - interface
    - select multiple planets
       - queue units in multiple planets
@@ -44,6 +53,7 @@
          - maybe should be a little manual (planet by planet?): it's fun preparing to attack
    - zoom in/out?
    - convoys
+- refactor client: buildingInterface is a big sausage
 - tidy up visuals pt I
    - background stars
    - planet effects
@@ -77,6 +87,7 @@
 === week 4
 - persist
 === extra
+- has to test if building is allowed to build unit: API may be abused
 - units should consume food too
    - what if they're in ships? what if they're docked?
 - make ships in other peoples' planets be usable: e.g. rescue dudes losing a battle
@@ -94,9 +105,7 @@
       - full screen
       - landscape
 - communication refactor
-   - server should answer all messages, at least with 'ok' or 'fail', etc
       - client should not let you TRY to change resources you don't own: shouldn't show edit button on name, click to build, etc
-   - client should receive data directly from tick
    - maybe client should test type of messages received? registered player, new tick, etc
    - ___reconnect___ hack: using color to send the id, yadda yadda; should use Message
    - check for errors when converting types and etc: grep _

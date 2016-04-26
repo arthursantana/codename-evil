@@ -26,7 +26,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
+	go func() { // send tick warnings to client
 		for {
 			if lastConnTick < lastDataUpdate {
 				if err = conn.WriteMessage(websocket.TextMessage, []byte("tick")); err != nil {
@@ -107,6 +107,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type = m.ParamsBuild.Type
 							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Operational = false
 							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].TicksUntilDone = ticksToBuild
+							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].TicksUntilProductionDone = 0
 							planets[m.ParamsBuild.PlanetId].Obtanium -= obtaniumCost
 						} else {
 							// error: not enough obtanium
@@ -137,7 +138,11 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 						obtaniumCost = obtaniumCostPerLockheed
 					}
 
-					planets[planetId].Obtanium += obtaniumCost / 2
+					if planets[planetId].Buildings[x][y].TicksUntilDone > 0 {
+						planets[planetId].Obtanium += obtaniumCost
+					} else {
+						planets[planetId].Obtanium += obtaniumCost / 2
+					}
 					planets[planetId].Buildings[x][y].Type = ""
 					planets[planetId].Buildings[x][y].Operational = true
 					planets[planetId].Buildings[x][y].TicksUntilDone = 0
@@ -149,24 +154,30 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 					workerCost := 0
 					cattleCost := 0
 					obtaniumCost := 0
+					ticksToBuild := 0
 
 					switch m.ParamsBuildShip.Type {
 					case "colonizer":
 						workerCost = workerCostPerColonizer
 						cattleCost = cattleCostPerColonizer
 						obtaniumCost = obtaniumCostPerColonizer
+						ticksToBuild = ticksToBuildColonizer
 					case "trojan":
 						workerCost = workerCostPerTrojan
 						cattleCost = cattleCostPerTrojan
 						obtaniumCost = obtaniumCostPerTrojan
+						ticksToBuild = ticksToBuildTrojan
 					}
 
 					if planets[m.ParamsBuildShip.PlanetId].DockSpace > 0 &&
 						planets[m.ParamsBuildShip.PlanetId].Workers >= workerCost &&
 						planets[m.ParamsBuildShip.PlanetId].Cattle >= cattleCost &&
 						planets[m.ParamsBuildShip.PlanetId].Obtanium >= obtaniumCost {
-						s := Ship{len(ships), playerId, m.ParamsBuildShip.PlanetId, m.ParamsBuildShip.Type, m.ParamsBuildShip.Name, planets[m.ParamsBuildShip.PlanetId].Position, &planets[m.ParamsBuildShip.PlanetId], nil, 3}
-						ships = append(ships, s)
+
+						if len(planets[m.ParamsBuildShip.PlanetId].Buildings[m.ParamsBuildShip.I][m.ParamsBuildShip.J].ProductionQueue) == 0 {
+							planets[m.ParamsBuildShip.PlanetId].Buildings[m.ParamsBuildShip.I][m.ParamsBuildShip.J].TicksUntilProductionDone = ticksToBuild
+						}
+						planets[m.ParamsBuildShip.PlanetId].Buildings[m.ParamsBuildShip.I][m.ParamsBuildShip.J].ProductionQueue = append(planets[m.ParamsBuildShip.PlanetId].Buildings[m.ParamsBuildShip.I][m.ParamsBuildShip.J].ProductionQueue, m.ParamsBuildShip.Type)
 
 						planets[m.ParamsBuildShip.PlanetId].Workers -= workerCost
 						planets[m.ParamsBuildShip.PlanetId].Cattle -= cattleCost
@@ -192,8 +203,10 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 					if planets[m.ParamsTrainUnit.PlanetId].UnitSpace > 0 &&
 						planets[m.ParamsTrainUnit.PlanetId].Workers >= workerCost &&
 						planets[m.ParamsTrainUnit.PlanetId].Obtanium >= obtaniumCost {
-						u := Unit{len(units), playerId, m.ParamsTrainUnit.PlanetId, -1, m.ParamsTrainUnit.Type, m.ParamsTrainUnit.Name}
-						units = append(units, u)
+						if len(planets[m.ParamsTrainUnit.PlanetId].Buildings[m.ParamsTrainUnit.I][m.ParamsTrainUnit.J].ProductionQueue) == 0 {
+							planets[m.ParamsTrainUnit.PlanetId].Buildings[m.ParamsTrainUnit.I][m.ParamsTrainUnit.J].TicksUntilProductionDone = ticksToBuildSoldier
+						}
+						planets[m.ParamsTrainUnit.PlanetId].Buildings[m.ParamsTrainUnit.I][m.ParamsTrainUnit.J].ProductionQueue = append(planets[m.ParamsTrainUnit.PlanetId].Buildings[m.ParamsTrainUnit.I][m.ParamsTrainUnit.J].ProductionQueue, m.ParamsTrainUnit.Type)
 
 						planets[m.ParamsTrainUnit.PlanetId].Workers -= workerCost
 						planets[m.ParamsTrainUnit.PlanetId].Obtanium -= obtaniumCost

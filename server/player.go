@@ -13,7 +13,9 @@ type Player struct {
 	Points int    `json:"points"`
 }
 
-func playersJSON(w http.ResponseWriter, players []Player) {
+type PlayerList []Player
+
+func (players PlayerList) writeJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, "\"players\": [")
 	separator := ""
 	for i := range players {

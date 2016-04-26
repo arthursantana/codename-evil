@@ -18,13 +18,11 @@ var BuildingInterface = React.createClass({
          command: "buildShip",
          paramsBuildShip: {
             type: type,
-            name: "Lil' ship",
-            //name: prompt("Ship name", ""),
             planetId: this.props.planet.id,
+            i: this.props.selectedI,
+            j: this.props.selectedJ
          }
       }));
-
-      this.props.unselectBuilding();
    },
 
    trainUnit: function(type) {
@@ -32,13 +30,11 @@ var BuildingInterface = React.createClass({
          command: "trainUnit",
          paramsTrainUnit: {
             type: type,
-            name: "Lil' Unit",
-            //name: prompt("Unit name", ""),
             planetId: this.props.planet.id,
+            i: this.props.selectedI,
+            j: this.props.selectedJ
          }
       }));
-
-      this.props.unselectBuilding();
    },
 
    sellBuilding: function() {
@@ -69,7 +65,7 @@ var BuildingInterface = React.createClass({
          interfaceBody = []
          while (count > 0) {
             interfaceBody.push(<div key={count} className="stillBuilding"></div>);
-            count--
+            count--;
          }
       } else if (b.operational == false) {
          interfaceBody = null
@@ -100,7 +96,7 @@ var BuildingInterface = React.createClass({
                      Lockheed
                      <div className="buildingCosts">
                         15k <span className="resource workers" title="Workers"></span>
-                        100 <span className="resource energy" title="Energy"></span>
+                        500 <span className="resource energy" title="Energy"></span>
                         200 <span className="resource obtanium" title="Obtanium"></span>
                      </div>
                   </div>
@@ -125,6 +121,28 @@ var BuildingInterface = React.createClass({
                </div>
             );
          } else if (b.type == "nasa") {
+            if (b.ticksUntilProductionDone == 0)
+               buildingQueue = null;
+            else {
+               var ticksUntilProductionDone = [];
+               for (var count = b.ticksUntilProductionDone; count > 0; count--) {
+                  ticksUntilProductionDone.push(<div key={count} className="stillBuilding"></div>);
+               }
+
+               var queue = [];
+               for (var i = 0; i < b.productionQueue.length; i++) {
+                  newShipIcon = <div key={i} data-id={i} className={"ShipIcon " + b.productionQueue[i]} title={b.productionQueue[i]}></div>;
+                  queue.push(newShipIcon);
+               }
+
+               buildingQueue = (
+                  <div>
+                     <br />
+                     Queue: {queue}<br /><br />
+                     {ticksUntilProductionDone}
+                  </div>
+               );
+            }
             interfaceBody = (
                <div>
                   <div>
@@ -143,18 +161,42 @@ var BuildingInterface = React.createClass({
                         2k <span className="resource obtanium" title="Obtanium"></span>
                      </div>
                   </div>
+                  {buildingQueue}
                </div>
             );
          } else if (b.type == "lockheed") {
+            if (b.ticksUntilProductionDone == 0)
+               buildingQueue = null;
+            else {
+               var ticksUntilProductionDone = [];
+               for (var count = b.ticksUntilProductionDone; count > 0; count--) {
+                  ticksUntilProductionDone.push(<div key={count} className="stillBuilding"></div>);
+               }
+
+               var queue = [];
+               for (var i = 0; i < b.productionQueue.length; i++) {
+                  newUnitIcon = <div key={i} data-id={i} className={"unitIcon " + b.productionQueue[i]} title={b.productionQueue[i]}></div>;
+                  queue.push(newUnitIcon);
+               }
+
+               buildingQueue = (
+                  <div>
+                     <br />
+                     Queue: {queue}<br /><br />
+                     {ticksUntilProductionDone}
+                  </div>
+               );
+            }
             interfaceBody = (
                <div>
                   <div>
                      <div className="unitIcon soldier" onClick={this.trainUnit.bind(this,"soldier")}></div>
                      Soldier Unit
                      <div className="unitCosts">
-                        25k <span className="resource workers" title="Workers"></span>
+                        5k <span className="resource workers" title="Workers"></span>
                         500 <span className="resource obtanium" title="Obtanium"></span>
                      </div>
+                     {buildingQueue}
                   </div>
                </div>
             );
