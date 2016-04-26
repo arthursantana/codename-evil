@@ -50,7 +50,7 @@ func shipsJSON(w http.ResponseWriter, ships []Ship) {
 }
 
 func (s *Ship) move() {
-	speed := 1.0
+	speed := 8.0
 
 	vector := [2]float64{s.Destination.Position[0] - s.Position[0], s.Destination.Position[1] - s.Position[1]}
 	norm := math.Sqrt(vector[0]*vector[0] + vector[1]*vector[1])
@@ -76,6 +76,8 @@ func (s *Ship) move() {
 						s.Destination.DockSpace--
 					} else {
 						s.PlanetId = s.Destination.Id
+
+						s.OwnerId = s.Destination.OwnerId // temporary hack to avoid ships lost in limbo
 					}
 				} else { // already colonized, go back
 					s.Destination = s.Origin

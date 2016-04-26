@@ -10,10 +10,10 @@ const (
 	mealsPerCow                                = 20
 	cattleReproductionToFoodRateAtStableGrowth = 2
 
-	maxCattlePerHQ   = 100000
+	maxCattlePerHQ   = 150000
 	maxCattlePerFarm = 50000
 
-	energyPerHQ = 100
+	energyPerHQ = 2000
 
 	operatorsPerFarm    = -1000
 	energyPerFarm       = -100
@@ -25,17 +25,17 @@ const (
 	obtaniumCostPerGenerator = 200
 	ticksToBuildGenerator    = 10
 
-	operatorsPerLockheed    = -10000
+	operatorsPerLockheed    = -15000
 	energyPerLockheed       = -100
 	obtaniumCostPerLockheed = 200
-	ticksToBuildLockheed    = 20
+	ticksToBuildLockheed    = 30
 
 	operatorsPerVale    = -20000
 	energyPerVale       = -2000
 	obtaniumCostPerVale = 1000
 	ticksToBuildVale    = 20
 
-	operatorsPerNasa    = -40000
+	operatorsPerNasa    = -30000
 	energyPerNasa       = -1000
 	obtaniumCostPerNasa = 500
 	ticksToBuildNasa    = 30

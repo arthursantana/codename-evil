@@ -56,7 +56,7 @@ func (p *Planet) randomize() {
 	p.Workers = 35000
 	p.Cattle = 60000
 	p.Energy = 0
-	p.Obtanium = 1000
+	p.Obtanium = 4000
 
 	p.DockSpace = 10
 	p.UnitSpace = 10

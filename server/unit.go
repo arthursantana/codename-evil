@@ -40,7 +40,7 @@ func unitJSON(w http.ResponseWriter, unit []Unit) {
 }
 
 func (u *Unit) hits() bool {
-	effectiveness := 0.01
+	effectiveness := 0.005
 
 	bingo := rand.Float64()
 

@@ -92,8 +92,14 @@ var StarMap = React.createClass({
    render: function () {
       var voyageModeClass = "";
 
-      if (this.props.selectedShip != null)
+      if (this.props.selectedShip != null) {
          voyageModeClass = "voyageMode"
+
+         switch (this.props.selectedShip.type) {
+            case "colonizer": voyageModeClass += " colonizer"; break;
+            case "trojan": voyageModeClass += " trojan"; break;
+         }
+      }
 
       if (this.props.planets == null || this.props.players == null)
          return null;

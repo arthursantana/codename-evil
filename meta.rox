@@ -35,7 +35,15 @@
       % basic combat rules
 % make ships go back to origin when applicable: invalid destination
 % buildings should not be built instantly
-- units should not be trained instantly
+- units should not be trained instantly: queue
+- interface
+   - select multiple planets
+      - queue units in multiple planets
+      - attack from multiple planets at once
+      - multi/auto-load: easy to put your dudes in ships to attack
+         - maybe should be a little manual (planet by planet?): it's fun preparing to attack
+   - zoom in/out?
+   - convoys
 - tidy up visuals pt I
    - background stars
    - planet effects
@@ -47,11 +55,12 @@
       - different sizes
    - alliances: allow friendly units from other players
    - tech tree?
-   - combat/conquering pt II
-         - long distance ballistics (expensive in obtanium): maximum distance?
-            - carriers: can be targeted and boarded themselves
-         - fighters? ways to destroy ships before they land?
-   - ships and unit
+   - fog of war?
+   - combat pt II
+      - long distance ballistics (expensive in obtanium): maximum distance?
+         - carriers: can be targeted and boarded themselves
+      - fighters? ways to destroy ships before they land?
+   - ships and units
       - more combat ships and units
       - more support ships and units? scouts/spies, commerce, propagandists, whatever
 - balance: make it fun with varied viable strats
@@ -59,9 +68,12 @@
    - limit obtanium per planet: promotes non-turtling
    - scale factors: e.g. multiple generators together are more efficient: promotes specialized planets, more varied gameplay
       - implementation idea: upgrades per planet - makes you want to have same type of buildings in a planet
+- lobby
+   - integrated chat
 - refactor interface: has to be easy to manage all your planets and ships and whatever
    - easy "jump between my planets" button
    - easy "jump between my ships" button
+   - auto-attack, auto-load: some way for units to keep attacking and re-attacking a planet
 === week 4
 - persist
 === extra

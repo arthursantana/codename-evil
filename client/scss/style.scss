@@ -32,8 +32,12 @@ body {
    display: block;
 }
 
-#starMap.voyageMode {
-   cursor: url("/static/img/colonizer.png") 32 0, auto;
+#starMap.voyageMode.colonizer {
+   cursor: url("/static/img/colonizer.png") 0 0, auto;
+}
+
+#starMap.voyageMode.trojan {
+   cursor: url("/static/img/trojan.png") 0 0, auto;
 }
 
 @mixin modal {
@@ -95,8 +99,9 @@ body {
    #shipList, #unitList {
       margin: 1em 0;
 
-      .unitIcon {
+      .unitIcon, .unitIcon {
          cursor: move;
+         margin: 0;
       }
    }
 
@@ -104,6 +109,7 @@ body {
       cursor: pointer;
       width: 32px;
       height: 32px;
+      margin: 0 5px 0 0;
       display: inline-block
    }
 

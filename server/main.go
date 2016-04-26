@@ -18,7 +18,7 @@ func main() {
 	var (
 		nPlanets         = flag.Int("planets", 10, "number of planets")
 		dataUpdatePeriod = flag.Int("dataUpdatePeriod", 100, "number of milliseconds between data updates")
-		tickPeriod       = flag.Int("tickPeriod", 500, "number of milliseconds between ticks (has to be multiple of dataUpdatePeriod)")
+		tickPeriod       = flag.Int("tickPeriod", 1000, "number of milliseconds between ticks (has to be multiple of dataUpdatePeriod)")
 	)
 
 	flag.Parse()

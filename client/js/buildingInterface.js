@@ -99,7 +99,7 @@ var BuildingInterface = React.createClass({
                      <div className="tile lockheed" title={buildingTitle("lockheed")} onClick={this.build.bind(this, "lockheed")} ></div>
                      Lockheed
                      <div className="buildingCosts">
-                        5k <span className="resource workers" title="Workers"></span>
+                        15k <span className="resource workers" title="Workers"></span>
                         100 <span className="resource energy" title="Energy"></span>
                         200 <span className="resource obtanium" title="Obtanium"></span>
                      </div>
@@ -117,7 +117,7 @@ var BuildingInterface = React.createClass({
                      <div className="tile nasa" title={buildingTitle("nasa")} onClick={this.build.bind(this, "nasa")} ></div>
                      Nasa
                      <div className="buildingCosts">
-                        40k <span className="resource workers" title="Workers"></span>
+                        30k <span className="resource workers" title="Workers"></span>
                         1k <span className="resource energy" title="Energy"></span>
                         500 <span className="resource obtanium" title="Obtanium"></span>
                      </div>
