@@ -13,22 +13,10 @@ var BuildingInterface = React.createClass({
       this.props.unselectBuilding();
    },
 
-   buildShip: function(type) {
+   train: function(type) {
       socket.send(JSON.stringify({
-         command: "buildShip",
-         paramsBuildShip: {
-            type: type,
-            planetId: this.props.planet.id,
-            i: this.props.selectedI,
-            j: this.props.selectedJ
-         }
-      }));
-   },
-
-   trainUnit: function(type) {
-      socket.send(JSON.stringify({
-         command: "trainUnit",
-         paramsTrainUnit: {
+         command: "train",
+         paramsTrain: {
             type: type,
             planetId: this.props.planet.id,
             i: this.props.selectedI,
@@ -146,7 +134,7 @@ var BuildingInterface = React.createClass({
             interfaceBody = (
                <div>
                   <div>
-                     <div className="unitIcon colonizer" onClick={this.buildShip.bind(this,"colonizer")}></div>
+                     <div className="unitIcon colonizer" onClick={this.train.bind(this,"colonizer")}></div>
                      Colonizer
                      <div className="unitCosts">
                         50k <span className="resource workers" title="Workers"></span>
@@ -155,7 +143,7 @@ var BuildingInterface = React.createClass({
                      </div>
                   </div>
                   <div>
-                     <div className="unitIcon trojan" onClick={this.buildShip.bind(this,"trojan")}></div>
+                     <div className="unitIcon trojan" onClick={this.train.bind(this,"trojan")}></div>
                      Trojan
                      <div className="unitCosts">
                         2k <span className="resource obtanium" title="Obtanium"></span>
@@ -190,7 +178,7 @@ var BuildingInterface = React.createClass({
             interfaceBody = (
                <div>
                   <div>
-                     <div className="unitIcon soldier" onClick={this.trainUnit.bind(this,"soldier")}></div>
+                     <div className="unitIcon soldier" onClick={this.train.bind(this,"soldier")}></div>
                      Soldier Unit
                      <div className="unitCosts">
                         5k <span className="resource workers" title="Workers"></span>

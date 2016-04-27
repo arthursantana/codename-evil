@@ -75,8 +75,8 @@ var StarMap = React.createClass({
                this.props.setSelectedPlanet(p);
             } else {
                socket.send(JSON.stringify({
-                  command: "setVoyage",
-                  paramsSetVoyage: {
+                  command: "setDestination",
+                  paramsSetDestination: {
                      shipId: this.props.selectedShip.id,
                      destinationId: p.id
                   }
@@ -85,7 +85,7 @@ var StarMap = React.createClass({
          }
 
          if (this.props.selectedShip != null)
-            this.props.quitSetVoyageMode();
+            this.props.quitSetDestinationMode();
       }
    },
 

@@ -149,83 +149,64 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				} else {
 					// error: not your planet, dagnabbit!
 				}
-			case "buildShip":
-				if planets[m.ParamsBuildShip.PlanetId].OwnerId == playerId {
+			case "train":
+				if planets[m.ParamsTrain.PlanetId].OwnerId == playerId {
 					workerCost := 0
 					cattleCost := 0
 					obtaniumCost := 0
 					ticksToBuild := 0
+					var relevantSpace *int = nil
 
-					switch m.ParamsBuildShip.Type {
+					switch m.ParamsTrain.Type {
 					case "colonizer":
 						workerCost = workerCostPerColonizer
 						cattleCost = cattleCostPerColonizer
 						obtaniumCost = obtaniumCostPerColonizer
 						ticksToBuild = ticksToBuildColonizer
+						relevantSpace = &planets[m.ParamsTrain.PlanetId].DockSpace
 					case "trojan":
 						workerCost = workerCostPerTrojan
 						cattleCost = cattleCostPerTrojan
 						obtaniumCost = obtaniumCostPerTrojan
 						ticksToBuild = ticksToBuildTrojan
-					}
-
-					if planets[m.ParamsBuildShip.PlanetId].DockSpace > 0 &&
-						planets[m.ParamsBuildShip.PlanetId].Workers >= workerCost &&
-						planets[m.ParamsBuildShip.PlanetId].Cattle >= cattleCost &&
-						planets[m.ParamsBuildShip.PlanetId].Obtanium >= obtaniumCost {
-
-						if len(planets[m.ParamsBuildShip.PlanetId].Buildings[m.ParamsBuildShip.I][m.ParamsBuildShip.J].ProductionQueue) == 0 {
-							planets[m.ParamsBuildShip.PlanetId].Buildings[m.ParamsBuildShip.I][m.ParamsBuildShip.J].TicksUntilProductionDone = ticksToBuild
-						}
-						planets[m.ParamsBuildShip.PlanetId].Buildings[m.ParamsBuildShip.I][m.ParamsBuildShip.J].ProductionQueue = append(planets[m.ParamsBuildShip.PlanetId].Buildings[m.ParamsBuildShip.I][m.ParamsBuildShip.J].ProductionQueue, m.ParamsBuildShip.Type)
-
-						planets[m.ParamsBuildShip.PlanetId].Workers -= workerCost
-						planets[m.ParamsBuildShip.PlanetId].Cattle -= cattleCost
-						planets[m.ParamsBuildShip.PlanetId].Obtanium -= obtaniumCost
-						planets[m.ParamsBuildShip.PlanetId].DockSpace--
-					} else {
-						// error: not enough space or obtanium
-					}
-				} else {
-					// error: trying to build in somebody else's planet
-				}
-			case "trainUnit":
-				if planets[m.ParamsTrainUnit.PlanetId].OwnerId == playerId {
-					workerCost := 0
-					obtaniumCost := 0
-
-					switch m.ParamsTrainUnit.Type {
+						relevantSpace = &planets[m.ParamsTrain.PlanetId].DockSpace
 					case "soldier":
 						workerCost = workerCostPerSoldierUnit
+						cattleCost = 0
 						obtaniumCost = obtaniumCostPerSoldierUnit
+						ticksToBuild = ticksToBuildSoldierUnit
+						relevantSpace = &planets[m.ParamsTrain.PlanetId].UnitSpace
 					}
 
-					if planets[m.ParamsTrainUnit.PlanetId].UnitSpace > 0 &&
-						planets[m.ParamsTrainUnit.PlanetId].Workers >= workerCost &&
-						planets[m.ParamsTrainUnit.PlanetId].Obtanium >= obtaniumCost {
-						if len(planets[m.ParamsTrainUnit.PlanetId].Buildings[m.ParamsTrainUnit.I][m.ParamsTrainUnit.J].ProductionQueue) == 0 {
-							planets[m.ParamsTrainUnit.PlanetId].Buildings[m.ParamsTrainUnit.I][m.ParamsTrainUnit.J].TicksUntilProductionDone = ticksToBuildSoldier
-						}
-						planets[m.ParamsTrainUnit.PlanetId].Buildings[m.ParamsTrainUnit.I][m.ParamsTrainUnit.J].ProductionQueue = append(planets[m.ParamsTrainUnit.PlanetId].Buildings[m.ParamsTrainUnit.I][m.ParamsTrainUnit.J].ProductionQueue, m.ParamsTrainUnit.Type)
+					if *relevantSpace > 0 &&
+						planets[m.ParamsTrain.PlanetId].Workers >= workerCost &&
+						planets[m.ParamsTrain.PlanetId].Cattle >= cattleCost &&
+						planets[m.ParamsTrain.PlanetId].Obtanium >= obtaniumCost {
 
-						planets[m.ParamsTrainUnit.PlanetId].Workers -= workerCost
-						planets[m.ParamsTrainUnit.PlanetId].Obtanium -= obtaniumCost
-						planets[m.ParamsTrainUnit.PlanetId].UnitSpace--
+						if len(planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue) == 0 {
+							planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].TicksUntilProductionDone = ticksToBuild
+						}
+						planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue = append(planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue, m.ParamsTrain.Type)
+						(*relevantSpace)--
+
+						planets[m.ParamsTrain.PlanetId].Workers -= workerCost
+						planets[m.ParamsTrain.PlanetId].Cattle -= cattleCost
+						planets[m.ParamsTrain.PlanetId].Obtanium -= obtaniumCost
 					} else {
 						// error: not enough space or obtanium
 					}
 				} else {
 					// error: trying to build in somebody else's planet
 				}
-			case "setVoyage":
-				ship := &ships[m.ParamsSetVoyage.ShipId]
+			case "setDestination":
+				ship := &ships[m.ParamsSetDestination.ShipId]
 
 				if ship.OwnerId == playerId {
 					if ship.PlanetId != -1 {
 						if planets[ship.PlanetId].OwnerId == playerId {
-							planets[m.ParamsBuildShip.PlanetId].DockSpace++
+							planets[ship.PlanetId].DockSpace++
 
-							ship.Destination = &planets[m.ParamsSetVoyage.DestinationId]
+							ship.Destination = &planets[m.ParamsSetDestination.DestinationId]
 
 							ship.PlanetId = -1
 						} else {

@@ -20,11 +20,11 @@ var Game = React.createClass({
       this.setState({ selectedPlanet: planet });
    },
 
-   enterSetVoyageMode: function (ship) {
+   enterSetDestinationMode: function (ship) {
       this.setState({ selectedPlanet: null, selectedShip: ship });
    },
    
-   quitSetVoyageMode: function () {
+   quitSetDestinationMode: function () {
       this.setState({ selectedShip: null });
    },
 
@@ -66,8 +66,8 @@ var Game = React.createClass({
    render: function () {
       return (
          <div>
-            <StarMap planets={this.state.planets} players={this.state.players} ships={this.state.ships} setSelectedPlanet={this.setSelectedPlanet} selectedShip={this.state.selectedShip} quitSetVoyageMode={this.quitSetVoyageMode} />
-            <ManagementInterface planets={this.state.planets} players={this.state.players} ships={this.state.ships} units={this.state.units} selectedPlanet={this.state.selectedPlanet} unselectPlanet={this.unselectPlanet} enterSetVoyageMode={this.enterSetVoyageMode} />
+            <StarMap planets={this.state.planets} players={this.state.players} ships={this.state.ships} setSelectedPlanet={this.setSelectedPlanet} selectedShip={this.state.selectedShip} quitSetDestinationMode={this.quitSetDestinationMode} />
+            <ManagementInterface planets={this.state.planets} players={this.state.players} ships={this.state.ships} units={this.state.units} selectedPlanet={this.state.selectedPlanet} unselectPlanet={this.unselectPlanet} enterSetDestinationMode={this.enterSetDestinationMode} />
          </div>
       );
    },

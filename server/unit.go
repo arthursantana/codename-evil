@@ -11,7 +11,7 @@ import (
 const (
 	workerCostPerSoldierUnit   = 5000
 	obtaniumCostPerSoldierUnit = 500
-	ticksToBuildSoldier        = 10
+	ticksToBuildSoldierUnit    = 10
 )
 
 type Unit struct {
@@ -20,7 +20,6 @@ type Unit struct {
 	PlanetId int    `json:"planetId"`
 	ShipId   int    `json:"shipId"`
 	Type     string `json:"type"`
-	Name     string `json:"name"`
 }
 
 type UnitList []Unit
@@ -43,7 +42,7 @@ func (unit UnitList) writeJSON(w http.ResponseWriter) {
 }
 
 func (u *Unit) hits() bool {
-	effectiveness := 0.005
+	effectiveness := 0.008
 
 	bingo := rand.Float64()
 

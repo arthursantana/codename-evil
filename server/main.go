@@ -8,11 +8,14 @@ import (
 	"time"
 )
 
-var lastDataUpdate int64
-var planets PlanetList
-var players PlayerList
-var ships ShipList
-var units UnitList
+var (
+	players PlayerList
+	planets PlanetList
+	ships   ShipList
+	units   UnitList
+
+	lastDataUpdate int64
+)
 
 func main() {
 	var (
@@ -37,7 +40,6 @@ func main() {
 
 	// GENERATE RANDOM STUFF
 	rand.Seed(time.Now().UTC().UnixNano())
-
 	for i := range planets {
 		planets[i].randomize()
 		planets[i].Id = i

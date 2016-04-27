@@ -25,7 +25,6 @@ type Ship struct {
 	OwnerId  int    `json:"ownerId"`
 	PlanetId int    `json:"planetId"`
 	Type     string `json:"type"`
-	Name     string `json:"name"`
 
 	Position    [2]float64 `json:"position"`
 	Origin      *Planet    `json:"-"`
@@ -54,7 +53,7 @@ func (ships ShipList) writeJSON(w http.ResponseWriter) {
 }
 
 func (s *Ship) move() {
-	speed := 8.0
+	speed := 2.0
 
 	vector := [2]float64{s.Destination.Position[0] - s.Position[0], s.Destination.Position[1] - s.Position[1]}
 	norm := math.Sqrt(vector[0]*vector[0] + vector[1]*vector[1])
@@ -68,7 +67,6 @@ func (s *Ship) move() {
 				s.Destination.Obtanium = obtaniumCostPerColonizer
 
 				s.Destination.OwnerId = s.OwnerId
-				s.Destination.DockSpace--
 
 				s.PlanetId = -1
 				s.OwnerId = -1
@@ -93,36 +91,27 @@ func (s *Ship) move() {
 
 				return
 			} else { // drop them soldiers
+				var relevantSpace *int = nil
+				destinationId := s.Destination.Id
+
 				if s.Destination.OwnerId == s.OwnerId { // my planet, dock
-					for i := range units {
-						if s.Destination.UnitSpace == 0 {
-							break
-						} else {
-							if units[i].ShipId == s.Id {
-								units[i].PlanetId = s.Destination.Id
-								units[i].ShipId = -1
-								s.Destination.UnitSpace--
-								s.UnitSpace++
-							}
-						}
-					}
-
+					relevantSpace = &s.Destination.UnitSpace
 					s.PlanetId = s.Destination.Id
-				} else {
-					for i := range units {
-						if s.Destination.EnemyUnitSpace == 0 {
-							break
-						} else {
-							if units[i].ShipId == s.Id {
-								units[i].PlanetId = s.Destination.Id
-								units[i].ShipId = -1
-								s.Destination.EnemyUnitSpace--
-								s.UnitSpace++
-							}
-						}
-					}
+					s.Destination.DockSpace--
+				} else { // not my planet; go back (temporary)
+					relevantSpace = &s.Destination.EnemyUnitSpace
+					s.Destination = s.Origin
+				}
 
-					s.Destination = s.Origin // not my planet, go back; temporary
+				for i := range units {
+					if *relevantSpace == 0 {
+						break
+					} else if units[i].ShipId == s.Id {
+						units[i].PlanetId = destinationId
+						units[i].ShipId = -1
+						(*relevantSpace)--
+						s.UnitSpace++
+					}
 				}
 			}
 		}

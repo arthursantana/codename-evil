@@ -42,7 +42,7 @@ var ShipList = React.createClass({
                enemyShipClass = "";
             else
                enemyShipClass = " enemy";
-            newShipIcon = <div key={i} data-id={ship.id} className={"shipIcon " + ship.type + enemyShipClass} title={ship.type + " (" + ship.unitSpace + " slots available)"} onClick={this.props.enterSetVoyageMode.bind(null, this.props.ships[i])} onDragOver={this.handleDragOver} onDrop={this.handleDrop}></div>;
+            newShipIcon = <div key={i} data-id={ship.id} className={"shipIcon " + ship.type + enemyShipClass} title={ship.type + " (" + ship.unitSpace + " slots available)"} onClick={this.props.enterSetDestinationMode.bind(null, this.props.ships[i])} onDragOver={this.handleDragOver} onDrop={this.handleDrop}></div>;
             ships.push(newShipIcon);
          }
       }

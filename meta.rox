@@ -35,28 +35,30 @@
       % basic combat rules
 % make ships go back to origin when applicable: invalid destination
 % buildings should not be built instantly
+
+=== week 4
 % units should not be trained instantly: queue
 - refactor server
-   - server should answer all messages, at least with 'ok' or 'fail', etc
-   - client should receive data directly from tick
-   - horrible long names in variables in handleWebsockets: create shortcuts
-   - unit -> landUnit; interface Unit which is used by a single buildUnit command, implemented by LandUnit and Ship
+   % trainUnit, buildShip -> train
    - modularize commands: handleWebsocket should only talk about network, call methods to do the work
+   - horrible long names in variables in handleWebsockets: create shortcuts
    - map[string]stuff: all balance data should be in a big table indexed by type (later enums)
       - client should get costs from server (only one place to change values)
    - removed units/ships really be removed: pay attention to the fact that the list changing will break the tick loop
-- interface
-   - select multiple planets
-      - queue units in multiple planets
-      - attack from multiple planets at once
-      - multi/auto-load: easy to put your dudes in ships to attack
-         - maybe should be a little manual (planet by planet?): it's fun preparing to attack
-   - zoom in/out?
-   - convoys
-- refactor client: buildingInterface is a big sausage
+   - server should answer all messages, at least with 'ok' or 'fail', etc
+   - too much data going around: network problems on some clients
+      - client should receive data directly from tick
+      - test from l2labs
+- necessary interface upgrades: select multiple planets
+   - queue units in multiple planets
+   - attack from multiple planets at once
+   - multi/auto-load: easy to put your dudes in ships to attack
+      - maybe should be a little manual (planet by planet?): it's fun preparing to attack
 - tidy up visuals pt I
+   - zoom in/out?
    - background stars
    - planet effects
+- refactor client: buildingInterface is a big sausage
 - content part I
    - upgrades
       - additional hq build queue
@@ -81,12 +83,12 @@
 - lobby
    - integrated chat
 - refactor interface: has to be easy to manage all your planets and ships and whatever
+   - convoys
    - easy "jump between my planets" button
    - easy "jump between my ships" button
    - auto-attack, auto-load: some way for units to keep attacking and re-attacking a planet
-=== week 4
-- persist
 === extra
+- persist
 - has to test if building is allowed to build unit: API may be abused
 - units should consume food too
    - what if they're in ships? what if they're docked?

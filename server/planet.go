@@ -145,6 +145,15 @@ func (p *Planet) combat() {
 			if units[i].PlanetId == p.Id {
 				if units[i].OwnerId != p.OwnerId {
 					p.OwnerId = units[i].OwnerId
+
+					p.UnitSpace, p.EnemyUnitSpace = p.EnemyUnitSpace, p.UnitSpace // away and home team switch places
+
+					for j := range ships { // steals present ships
+						if ships[j].PlanetId == p.Id {
+							ships[j].OwnerId = units[i].OwnerId
+						}
+					}
+
 					break
 				}
 			}

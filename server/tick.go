@@ -159,16 +159,16 @@ func tick() {
 
 						switch planets[i].Buildings[j][k].Type {
 						case "lockheed":
-							u := Unit{len(units), planets[i].OwnerId, planets[i].Id, -1, planets[i].Buildings[j][k].ProductionQueue[0], "noname"}
+							u := Unit{len(units), planets[i].OwnerId, planets[i].Id, -1, planets[i].Buildings[j][k].ProductionQueue[0]}
 							units = append(units, u)
 						case "nasa":
-							s := Ship{len(ships), planets[i].OwnerId, planets[i].Id, planets[i].Buildings[j][k].ProductionQueue[0], "noname", planets[i].Position, &planets[i], nil, 3}
+							s := Ship{len(ships), planets[i].OwnerId, planets[i].Id, planets[i].Buildings[j][k].ProductionQueue[0], planets[i].Position, &planets[i], nil, 3}
 							ships = append(ships, s)
 						}
 						planets[i].Buildings[j][k].ProductionQueue = planets[i].Buildings[j][k].ProductionQueue[1:]
 
 						if len(planets[i].Buildings[j][k].ProductionQueue) > 0 {
-							planets[i].Buildings[j][k].TicksUntilProductionDone = ticksToBuildSoldier
+							planets[i].Buildings[j][k].TicksUntilProductionDone = ticksToBuildSoldierUnit
 						} else {
 							planets[i].Buildings[j][k].TicksUntilProductionDone = 0 // not building anything
 						}

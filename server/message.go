@@ -5,9 +5,8 @@ type Message struct {
 	ParamsChangePlanetName ParamsChangePlanetName `json:"paramsChangePlanetName"`
 	ParamsBuild            ParamsBuild            `json:"paramsBuild"`
 	ParamsSellBuilding     ParamsSellBuilding     `json:"paramsSellBuilding"`
-	ParamsBuildShip        ParamsBuildShip        `json:"paramsBuildShip"`
-	ParamsTrainUnit        ParamsTrainUnit        `json:"paramsTrainUnit"`
-	ParamsSetVoyage        ParamsSetVoyage        `json:"paramsSetVoyage"`
+	ParamsTrain            ParamsTrain            `json:"paramsTrain"`
+	ParamsSetDestination   ParamsSetDestination   `json:"paramsSetDestination"`
 	ParamsBoardShip        ParamsBoardShip        `json:"paramsBoardShip"`
 }
 
@@ -29,23 +28,14 @@ type ParamsSellBuilding struct {
 	J        int `json:"j"`
 }
 
-type ParamsTrainUnit struct {
+type ParamsTrain struct {
 	Type     string `json:"type"`
-	Name     string `json:"name"`
 	PlanetId int    `json:"planetId"`
 	I        int    `json:"i"`
 	J        int    `json:"j"`
 }
 
-type ParamsBuildShip struct {
-	Type     string `json:"type"`
-	Name     string `json:"name"`
-	PlanetId int    `json:"planetId"`
-	I        int    `json:"i"`
-	J        int    `json:"j"`
-}
-
-type ParamsSetVoyage struct {
+type ParamsSetDestination struct {
 	ShipId        int `json:"shipId"`
 	DestinationId int `json:"destinationId"`
 }
