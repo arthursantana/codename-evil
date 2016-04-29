@@ -77,6 +77,8 @@ func (p *Planet) randomize() {
 
 type PlanetList []Planet
 
+var planets PlanetList
+
 func (planets PlanetList) writeJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, "\"planets\": [")
 	separator := ""

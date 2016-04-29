@@ -151,47 +151,28 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				}
 			case "train":
 				if planets[m.ParamsTrain.PlanetId].OwnerId == playerId {
-					workerCost := 0
-					cattleCost := 0
-					obtaniumCost := 0
-					ticksToBuild := 0
 					var relevantSpace *int = nil
-
 					switch m.ParamsTrain.Type {
-					case "colonizer":
-						workerCost = workerCostPerColonizer
-						cattleCost = cattleCostPerColonizer
-						obtaniumCost = obtaniumCostPerColonizer
-						ticksToBuild = ticksToBuildColonizer
-						relevantSpace = &planets[m.ParamsTrain.PlanetId].DockSpace
-					case "trojan":
-						workerCost = workerCostPerTrojan
-						cattleCost = cattleCostPerTrojan
-						obtaniumCost = obtaniumCostPerTrojan
-						ticksToBuild = ticksToBuildTrojan
+					case "colonizer", "trojan":
 						relevantSpace = &planets[m.ParamsTrain.PlanetId].DockSpace
 					case "soldier":
-						workerCost = workerCostPerSoldierUnit
-						cattleCost = 0
-						obtaniumCost = obtaniumCostPerSoldierUnit
-						ticksToBuild = ticksToBuildSoldierUnit
 						relevantSpace = &planets[m.ParamsTrain.PlanetId].UnitSpace
 					}
 
 					if *relevantSpace > 0 &&
-						planets[m.ParamsTrain.PlanetId].Workers >= workerCost &&
-						planets[m.ParamsTrain.PlanetId].Cattle >= cattleCost &&
-						planets[m.ParamsTrain.PlanetId].Obtanium >= obtaniumCost {
+						planets[m.ParamsTrain.PlanetId].Workers >= stats[m.ParamsTrain.Type].workerCost &&
+						planets[m.ParamsTrain.PlanetId].Cattle >= stats[m.ParamsTrain.Type].cattleCost &&
+						planets[m.ParamsTrain.PlanetId].Obtanium >= stats[m.ParamsTrain.Type].obtaniumCost {
 
 						if len(planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue) == 0 {
-							planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].TicksUntilProductionDone = ticksToBuild
+							planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].TicksUntilProductionDone = stats[m.ParamsTrain.Type].ticksToBuild
 						}
 						planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue = append(planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue, m.ParamsTrain.Type)
 						(*relevantSpace)--
 
-						planets[m.ParamsTrain.PlanetId].Workers -= workerCost
-						planets[m.ParamsTrain.PlanetId].Cattle -= cattleCost
-						planets[m.ParamsTrain.PlanetId].Obtanium -= obtaniumCost
+						planets[m.ParamsTrain.PlanetId].Workers -= stats[m.ParamsTrain.Type].workerCost
+						planets[m.ParamsTrain.PlanetId].Cattle -= stats[m.ParamsTrain.Type].cattleCost
+						planets[m.ParamsTrain.PlanetId].Obtanium -= stats[m.ParamsTrain.Type].obtaniumCost
 					} else {
 						// error: not enough space or obtanium
 					}

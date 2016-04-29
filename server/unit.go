@@ -8,12 +8,6 @@ import (
 	"net/http"
 )
 
-const (
-	workerCostPerSoldierUnit   = 5000
-	obtaniumCostPerSoldierUnit = 500
-	ticksToBuildSoldierUnit    = 10
-)
-
 type Unit struct {
 	Id       int    `json:"id"`
 	OwnerId  int    `json:"ownerId"`
@@ -23,6 +17,8 @@ type Unit struct {
 }
 
 type UnitList []Unit
+
+var units UnitList
 
 func (unit UnitList) writeJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, "\"units\": [")

@@ -8,14 +8,7 @@ import (
 	"time"
 )
 
-var (
-	players PlayerList
-	planets PlanetList
-	ships   ShipList
-	units   UnitList
-
-	lastDataUpdate int64
-)
+var lastDataUpdate int64
 
 func main() {
 	var (

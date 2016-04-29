@@ -8,18 +8,6 @@ import (
 	"net/http"
 )
 
-const (
-	workerCostPerColonizer   = 50000
-	cattleCostPerColonizer   = 20000
-	obtaniumCostPerColonizer = 5000
-	ticksToBuildColonizer    = 30
-
-	workerCostPerTrojan   = 0
-	cattleCostPerTrojan   = 0
-	obtaniumCostPerTrojan = 2000
-	ticksToBuildTrojan    = 20
-)
-
 type Ship struct {
 	Id       int    `json:"id"`
 	OwnerId  int    `json:"ownerId"`
@@ -34,6 +22,8 @@ type Ship struct {
 }
 
 type ShipList []Ship
+
+var ships ShipList
 
 func (ships ShipList) writeJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, "\"ships\": [")
@@ -62,9 +52,9 @@ func (s *Ship) move() {
 		switch s.Type {
 		case "colonizer":
 			if s.Destination.OwnerId == -1 { // unhabited planet, colonize
-				s.Destination.Workers = workerCostPerColonizer
-				s.Destination.Cattle = cattleCostPerColonizer
-				s.Destination.Obtanium = obtaniumCostPerColonizer
+				s.Destination.Workers = stats["colonizer"].workerCost
+				s.Destination.Cattle = stats["colonizer"].cattleCost
+				s.Destination.Obtanium = stats["colonizer"].obtaniumCost
 
 				s.Destination.OwnerId = s.OwnerId
 

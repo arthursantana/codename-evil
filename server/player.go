@@ -15,6 +15,8 @@ type Player struct {
 
 type PlayerList []Player
 
+var players PlayerList
+
 func (players PlayerList) writeJSON(w http.ResponseWriter) {
 	fmt.Fprintf(w, "\"players\": [")
 	separator := ""

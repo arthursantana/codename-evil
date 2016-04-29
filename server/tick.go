@@ -168,7 +168,7 @@ func tick() {
 						planets[i].Buildings[j][k].ProductionQueue = planets[i].Buildings[j][k].ProductionQueue[1:]
 
 						if len(planets[i].Buildings[j][k].ProductionQueue) > 0 {
-							planets[i].Buildings[j][k].TicksUntilProductionDone = ticksToBuildSoldierUnit
+							planets[i].Buildings[j][k].TicksUntilProductionDone = stats[planets[i].Buildings[j][k].ProductionQueue[0]].ticksToBuild
 						} else {
 							planets[i].Buildings[j][k].TicksUntilProductionDone = 0 // not building anything
 						}
