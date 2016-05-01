@@ -38,17 +38,13 @@
 
 === week 4
 % units should not be trained instantly: queue
-- refactor server
+% refactor server
    % trainUnit, buildShip -> train
-   - modularize commands: handleWebsocket should only talk about network, call methods to do the work
-   - horrible long names in variables in handleWebsockets: create shortcuts
-   - map[string]stuff: all balance data should be in a big table indexed by type (later enums)
-      - client should get costs from server (only one place to change values)
-   - removed units/ships really be removed: pay attention to the fact that the list changing will break the tick loop
-   - server should answer all messages, at least with 'ok' or 'fail', etc
-   - too much data going around: network problems on some clients
-      - client should receive data directly from tick
-      - test from l2labs
+   % map[string]stuff: all stat data should be in a big table indexed by type (later enums)
+   % network problems
+      % timestamp tick data; should not update client if timestamp is older then the last one applied
+      % client should receive data directly from tick
+      % preload images and font
 - necessary interface upgrades: select multiple planets
    - queue units in multiple planets
    - attack from multiple planets at once
@@ -58,7 +54,15 @@
    - zoom in/out?
    - background stars
    - planet effects
-- refactor client: buildingInterface is a big sausage
+- refactor client
+   - client should get costs from server (only one place to change values)
+   - break things down: have different functions or components for different building interfaces and etc
+- refactor server
+   - modularize commands: handleWebsocket should only talk about network, call methods to do the work
+   - horrible long names in variables in handleWebsockets: create shortcuts
+   - server should answer all messages, at least with 'ok' or 'fail', etc
+   - removed units/ships really be removed: pay attention to the fact that the list changing will break the tick loop
+   - test from l2labs
 - content part I
    - upgrades
       - additional hq build queue
@@ -76,7 +80,7 @@
       - more combat ships and units
       - more support ships and units? scouts/spies, commerce, propagandists, whatever
 - balance: make it fun with varied viable strats
-   - empty squares generate resources
+   - empty squares generate resources?
    - limit obtanium per planet: promotes non-turtling
    - scale factors: e.g. multiple generators together are more efficient: promotes specialized planets, more varied gameplay
       - implementation idea: upgrades per planet - makes you want to have same type of buildings in a planet

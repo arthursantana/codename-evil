@@ -1,5 +1,7 @@
 var socket;
 
+var lastUpdateTimestamp = 0
+
 var Game = React.createClass({
    getInitialState: function () {
       return {
@@ -28,41 +30,6 @@ var Game = React.createClass({
       this.setState({ selectedShip: null });
    },
 
-   getData: function () {
-      var self = this;
-
-      $.ajax({
-         type: 'GET',
-         url: '/data/',
-         dataType: 'json',
-         success: function(answer){
-            var selectedPlanet = null
-            if (self.state.selectedPlanet != null) { // gotta find this planet in the new planet list
-               var selectedPlanetId = self.state.selectedPlanet.id;
-
-               for (var i = 0; i < answer.planets.length; i++) {
-                  if (answer.planets[i].id == selectedPlanetId) {
-                     selectedPlanet = answer.planets[i];
-                     break;
-                  }
-               }
-            }
-
-            // this is wrong: the references to the players and planets always change, so react keeps re-rendering it ARGXYZ
-            self.setState({
-               players: answer.players,
-               planets: answer.planets,
-               ships: answer.ships,
-               units: answer.units,
-               selectedPlanet: selectedPlanet
-            });
-         },
-         error: function(xhr, type){
-            console.log('Ajax error: GET /data/');
-         }
-      });
-   },
-
    render: function () {
       return (
          <div>
@@ -74,6 +41,7 @@ var Game = React.createClass({
 
    componentDidMount: function () {
       var self = this;
+
       socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/ws/");
 
       socket.onopen = function (event) {
@@ -93,8 +61,36 @@ var Game = React.createClass({
          }
 
          socket.onmessage = function (event) {
-            if (event.data == 'tick') {
-               self.getData();
+            var answer = JSON.parse(event.data);
+
+            if (answer.type == "dataUpdate") {
+               var selectedPlanet = null
+
+               if (answer.timestamp > lastUpdateTimestamp) {
+                  lastUpdateTimestamp = answer.timestamp;
+               } else {
+                  console.log("Error: received data from the past.");
+                  return;
+               }
+
+               if (self.state.selectedPlanet != null) { // gotta find this planet in the new planet list
+                  var selectedPlanetId = self.state.selectedPlanet.id;
+
+                  for (var i = 0; i < answer.planets.length; i++) {
+                     if (answer.planets[i].id == selectedPlanetId) {
+                        selectedPlanet = answer.planets[i];
+                        break;
+                     }
+                  }
+               }
+
+               self.setState({
+                  players: answer.players,
+                  planets: answer.planets,
+                  ships: answer.ships,
+                  units: answer.units,
+                  selectedPlanet: selectedPlanet
+               });
             }
             else { // stores registered userId
                document.cookie = "#" + event.data;

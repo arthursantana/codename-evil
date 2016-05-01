@@ -9,39 +9,6 @@ const (
 	cattleFertility                            = 0.04
 	mealsPerCow                                = 20
 	cattleReproductionToFoodRateAtStableGrowth = 2
-
-	maxCattlePerHQ   = 150000
-	maxCattlePerFarm = 50000
-
-	energyPerHQ = 2000
-
-	operatorsPerFarm    = -1000
-	energyPerFarm       = -100
-	obtaniumCostPerFarm = 100
-	ticksToBuildFarm    = 10
-
-	operatorsPerGenerator    = -5000
-	energyPerGenerator       = 1000
-	obtaniumCostPerGenerator = 200
-	ticksToBuildGenerator    = 10
-
-	operatorsPerLockheed    = -15000
-	energyPerLockheed       = -500
-	obtaniumCostPerLockheed = 200
-	ticksToBuildLockheed    = 10
-
-	operatorsPerVale    = -20000
-	energyPerVale       = -2000
-	obtaniumCostPerVale = 1000
-	ticksToBuildVale    = 20
-
-	operatorsPerNasa    = -30000
-	energyPerNasa       = -1000
-	obtaniumCostPerNasa = 500
-	ticksToBuildNasa    = 30
-
-	obtaniumPerVale = 15
-	obtaniumPerHQ   = 5
 )
 
 func tick() {
@@ -80,10 +47,10 @@ func tick() {
 				}
 
 				if planets[i].Buildings[j][k].Type == "generator" {
-					planets[i].BusyWorkers -= operatorsPerGenerator
-					if freeWorkers > -1*operatorsPerGenerator {
+					planets[i].BusyWorkers -= buildingStats["generator"].Operators
+					if freeWorkers > -1*buildingStats["generator"].Operators {
 						generators++
-						freeWorkers += operatorsPerGenerator
+						freeWorkers += buildingStats["generator"].Operators
 						planets[i].Buildings[j][k].Operational = true
 					} else {
 						planets[i].Buildings[j][k].Operational = false
@@ -94,7 +61,7 @@ func tick() {
 		}
 
 		// count number of buildings
-		planets[i].Energy = energyPerGenerator*generators + energyPerHQ
+		planets[i].Energy = buildingStats["generator"].EnergyPerTick*generators + buildingStats["hq"].EnergyPerTick
 		freeEnergy := planets[i].Energy
 		farms := 0
 		vales := 0
@@ -107,38 +74,30 @@ func tick() {
 					continue
 				}
 
-				operatorsPerThing := 0
-				energyPerThing := 0
 				switch planets[i].Buildings[j][k].Type {
-				default:
-					continue
 				case "farm":
-					operatorsPerThing = operatorsPerFarm
-					energyPerThing = energyPerFarm
 					count = &farms
 				case "lockheed":
-					operatorsPerThing = operatorsPerLockheed
-					energyPerThing = energyPerLockheed
 					count = &dummy
 				case "vale":
-					operatorsPerThing = operatorsPerVale
-					energyPerThing = energyPerVale
 					count = &vales
 				case "nasa":
-					operatorsPerThing = operatorsPerNasa
-					energyPerThing = energyPerNasa
 					count = &nasas
+				case "hq", "generator":
+					continue
+				default:
+					// should thrown an error here
 				}
 
-				planets[i].BusyWorkers -= operatorsPerThing
-				planets[i].BusyEnergy -= energyPerThing
-				if freeWorkers >= -1*operatorsPerThing && freeEnergy >= -1*energyPerThing {
+				planets[i].BusyWorkers -= buildingStats[planets[i].Buildings[j][k].Type].Operators
+				planets[i].BusyEnergy -= buildingStats[planets[i].Buildings[j][k].Type].EnergyPerTick
+				if freeWorkers >= -1*buildingStats[planets[i].Buildings[j][k].Type].EnergyPerTick && freeEnergy >= -1*buildingStats[planets[i].Buildings[j][k].Type].EnergyPerTick {
 					*count++
-					freeWorkers += operatorsPerThing
-					freeEnergy += energyPerThing
+					freeWorkers += buildingStats[planets[i].Buildings[j][k].Type].Operators
+					freeEnergy += buildingStats[planets[i].Buildings[j][k].Type].EnergyPerTick
 					planets[i].Buildings[j][k].Operational = true
 				} else {
-					if freeWorkers < -1*operatorsPerThing {
+					if freeWorkers < -1*buildingStats[planets[i].Buildings[j][k].Type].Operators {
 						planets[i].NotEnoughWorkers = true
 					} else {
 						planets[i].NotEnoughEnergy = true
@@ -168,7 +127,7 @@ func tick() {
 						planets[i].Buildings[j][k].ProductionQueue = planets[i].Buildings[j][k].ProductionQueue[1:]
 
 						if len(planets[i].Buildings[j][k].ProductionQueue) > 0 {
-							planets[i].Buildings[j][k].TicksUntilProductionDone = stats[planets[i].Buildings[j][k].ProductionQueue[0]].ticksToBuild
+							planets[i].Buildings[j][k].TicksUntilProductionDone = stats[planets[i].Buildings[j][k].ProductionQueue[0]].TicksToBuild
 						} else {
 							planets[i].Buildings[j][k].TicksUntilProductionDone = 0 // not building anything
 						}
@@ -184,7 +143,7 @@ func tick() {
 		planets[i].Workers += newWorkers
 
 		// limit cattle workers
-		cattleLimit := (farms)*maxCattlePerFarm + maxCattlePerHQ
+		cattleLimit := (farms)*buildingStats["farm"].MaxCattlePop + buildingStats["hq"].MaxCattlePop
 		planets[i].Cattle += newCattle
 		if planets[i].Cattle > cattleLimit {
 			planets[i].Cattle = cattleLimit
@@ -205,7 +164,7 @@ func tick() {
 		planets[i].Cattle -= cattleConsumption
 
 		// mining
-		planets[i].Obtanium += obtaniumPerVale*vales + obtaniumPerHQ
+		planets[i].Obtanium += buildingStats["vale"].ObtaniumPerTick*vales + buildingStats["hq"].ObtaniumPerTick
 
 		// move ships
 		for i := range ships {

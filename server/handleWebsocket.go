@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -29,10 +30,29 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	go func() { // send tick warnings to client
 		for {
 			if lastConnTick < lastDataUpdate {
-				if err = conn.WriteMessage(websocket.TextMessage, []byte("tick")); err != nil {
+				s, err := conn.NextWriter(websocket.TextMessage)
+				if err != nil {
 					log.Println(err)
 					return
 				}
+
+				// write data to stream
+				fmt.Fprintf(s, "{\"type\": \"dataUpdate\",")
+				fmt.Fprintf(s, "\"timestamp\": %v,", lastDataUpdate)
+				planets.writeJSON(s)
+				fmt.Fprintf(s, ",")
+				players.writeJSON(s)
+				fmt.Fprintf(s, ",")
+				ships.writeJSON(s)
+				fmt.Fprintf(s, ",")
+				units.writeJSON(s)
+				fmt.Fprintf(s, "}")
+
+				if err := s.Close(); err != nil {
+					log.Println(err)
+					return
+				}
+
 				lastConnTick = lastDataUpdate
 			} else {
 				time.Sleep(100 * time.Millisecond)
@@ -83,32 +103,18 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 			case "build":
 				if planets[m.ParamsBuild.PlanetId].OwnerId == playerId {
 					if planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type == "" {
-						obtaniumCost := 0
-						ticksToBuild := 0
 						switch m.ParamsBuild.Type {
-						case "farm":
-							obtaniumCost = obtaniumCostPerFarm
-							ticksToBuild = ticksToBuildFarm
-						case "generator":
-							obtaniumCost = obtaniumCostPerGenerator
-							ticksToBuild = ticksToBuildGenerator
-						case "nasa":
-							obtaniumCost = obtaniumCostPerNasa
-							ticksToBuild = ticksToBuildNasa
-						case "vale":
-							obtaniumCost = obtaniumCostPerVale
-							ticksToBuild = ticksToBuildVale
-						case "lockheed":
-							obtaniumCost = obtaniumCostPerLockheed
-							ticksToBuild = ticksToBuildLockheed
+						case "farm", "generator", "nasa", "vale", "lockheed":
+						default:
+							// should throw an error here
 						}
 
-						if planets[m.ParamsBuild.PlanetId].Obtanium >= obtaniumCost {
+						if planets[m.ParamsBuild.PlanetId].Obtanium >= buildingStats[m.ParamsBuild.Type].ObtaniumCost {
 							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Type = m.ParamsBuild.Type
 							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].Operational = false
-							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].TicksUntilDone = ticksToBuild
+							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].TicksUntilDone = buildingStats[m.ParamsBuild.Type].TicksToBuild
 							planets[m.ParamsBuild.PlanetId].Buildings[m.ParamsBuild.I][m.ParamsBuild.J].TicksUntilProductionDone = 0
-							planets[m.ParamsBuild.PlanetId].Obtanium -= obtaniumCost
+							planets[m.ParamsBuild.PlanetId].Obtanium -= buildingStats[m.ParamsBuild.Type].ObtaniumCost
 						} else {
 							// error: not enough obtanium
 						}
@@ -124,24 +130,16 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				y := m.ParamsSellBuilding.J
 
 				if planets[planetId].OwnerId == playerId && planets[planetId].Buildings[x][y].Type != "hq" {
-					obtaniumCost := 0
 					switch planets[planetId].Buildings[x][y].Type {
-					case "farm":
-						obtaniumCost = obtaniumCostPerFarm
-					case "generator":
-						obtaniumCost = obtaniumCostPerGenerator
-					case "nasa":
-						obtaniumCost = obtaniumCostPerNasa
-					case "vale":
-						obtaniumCost = obtaniumCostPerVale
-					case "lockheed":
-						obtaniumCost = obtaniumCostPerLockheed
+					case "farm", "generator", "nasa", "vale", "lockheed":
+					default:
+						// should throw an error here
 					}
 
 					if planets[planetId].Buildings[x][y].TicksUntilDone > 0 {
-						planets[planetId].Obtanium += obtaniumCost
+						planets[planetId].Obtanium += buildingStats[planets[planetId].Buildings[x][y].Type].ObtaniumCost
 					} else {
-						planets[planetId].Obtanium += obtaniumCost / 2
+						planets[planetId].Obtanium += buildingStats[planets[planetId].Buildings[x][y].Type].ObtaniumCost / 2
 					}
 					planets[planetId].Buildings[x][y].Type = ""
 					planets[planetId].Buildings[x][y].Operational = true
@@ -157,22 +155,24 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 						relevantSpace = &planets[m.ParamsTrain.PlanetId].DockSpace
 					case "soldier":
 						relevantSpace = &planets[m.ParamsTrain.PlanetId].UnitSpace
+					default:
+						// should throw an error here
 					}
 
 					if *relevantSpace > 0 &&
-						planets[m.ParamsTrain.PlanetId].Workers >= stats[m.ParamsTrain.Type].workerCost &&
-						planets[m.ParamsTrain.PlanetId].Cattle >= stats[m.ParamsTrain.Type].cattleCost &&
-						planets[m.ParamsTrain.PlanetId].Obtanium >= stats[m.ParamsTrain.Type].obtaniumCost {
+						planets[m.ParamsTrain.PlanetId].Workers >= stats[m.ParamsTrain.Type].WorkerCost &&
+						planets[m.ParamsTrain.PlanetId].Cattle >= stats[m.ParamsTrain.Type].CattleCost &&
+						planets[m.ParamsTrain.PlanetId].Obtanium >= stats[m.ParamsTrain.Type].ObtaniumCost {
 
 						if len(planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue) == 0 {
-							planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].TicksUntilProductionDone = stats[m.ParamsTrain.Type].ticksToBuild
+							planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].TicksUntilProductionDone = stats[m.ParamsTrain.Type].TicksToBuild
 						}
 						planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue = append(planets[m.ParamsTrain.PlanetId].Buildings[m.ParamsTrain.I][m.ParamsTrain.J].ProductionQueue, m.ParamsTrain.Type)
 						(*relevantSpace)--
 
-						planets[m.ParamsTrain.PlanetId].Workers -= stats[m.ParamsTrain.Type].workerCost
-						planets[m.ParamsTrain.PlanetId].Cattle -= stats[m.ParamsTrain.Type].cattleCost
-						planets[m.ParamsTrain.PlanetId].Obtanium -= stats[m.ParamsTrain.Type].obtaniumCost
+						planets[m.ParamsTrain.PlanetId].Workers -= stats[m.ParamsTrain.Type].WorkerCost
+						planets[m.ParamsTrain.PlanetId].Cattle -= stats[m.ParamsTrain.Type].CattleCost
+						planets[m.ParamsTrain.PlanetId].Obtanium -= stats[m.ParamsTrain.Type].ObtaniumCost
 					} else {
 						// error: not enough space or obtanium
 					}

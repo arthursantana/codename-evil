@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math"
-	"net/http"
 )
 
 type Ship struct {
@@ -25,7 +25,7 @@ type ShipList []Ship
 
 var ships ShipList
 
-func (ships ShipList) writeJSON(w http.ResponseWriter) {
+func (ships ShipList) writeJSON(w io.WriteCloser) {
 	fmt.Fprintf(w, "\"ships\": [")
 	separator := ""
 	for i := range ships {
@@ -52,9 +52,9 @@ func (s *Ship) move() {
 		switch s.Type {
 		case "colonizer":
 			if s.Destination.OwnerId == -1 { // unhabited planet, colonize
-				s.Destination.Workers = stats["colonizer"].workerCost
-				s.Destination.Cattle = stats["colonizer"].cattleCost
-				s.Destination.Obtanium = stats["colonizer"].obtaniumCost
+				s.Destination.Workers = stats["colonizer"].WorkerCost
+				s.Destination.Cattle = stats["colonizer"].CattleCost
+				s.Destination.Obtanium = stats["colonizer"].ObtaniumCost
 
 				s.Destination.OwnerId = s.OwnerId
 

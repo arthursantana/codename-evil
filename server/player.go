@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
-	"net/http"
 )
 
 type Player struct {
@@ -17,7 +17,7 @@ type PlayerList []Player
 
 var players PlayerList
 
-func (players PlayerList) writeJSON(w http.ResponseWriter) {
+func (players PlayerList) writeJSON(w io.WriteCloser) {
 	fmt.Fprintf(w, "\"players\": [")
 	separator := ""
 	for i := range players {

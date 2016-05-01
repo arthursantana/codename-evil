@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -46,18 +45,6 @@ func main() {
 	})
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/static/index.htm", http.StatusMovedPermanently)
-	})
-
-	http.HandleFunc("/data/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "{")
-		planets.writeJSON(w)
-		fmt.Fprintf(w, ",")
-		players.writeJSON(w)
-		fmt.Fprintf(w, ",")
-		ships.writeJSON(w)
-		fmt.Fprintf(w, ",")
-		units.writeJSON(w)
-		fmt.Fprintf(w, "}")
 	})
 
 	http.HandleFunc("/ws/", handleWebsocket)

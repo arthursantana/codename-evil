@@ -29,10 +29,6 @@ gulp.task('js', function () {
 });
 
 gulp.task('libs', function () {
-   gulp.src('node_modules/zepto-full/zepto.js')
-   //gulp.src('node_modules/zepto-full/zepto.min.js')
-   .pipe(gulp.dest('dist/static/js'));
-
    gulp.src('node_modules/react/dist/react.js')
    //gulp.src('node_modules/react/dist/react.min.js')
    .pipe(gulp.dest('dist/static/js'));

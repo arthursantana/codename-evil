@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
-	"net/http"
 )
 
 type Planet struct {
@@ -79,7 +79,7 @@ type PlanetList []Planet
 
 var planets PlanetList
 
-func (planets PlanetList) writeJSON(w http.ResponseWriter) {
+func (planets PlanetList) writeJSON(w io.WriteCloser) {
 	fmt.Fprintf(w, "\"planets\": [")
 	separator := ""
 	for i := range planets {

@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
-	"net/http"
 )
 
 type Unit struct {
@@ -20,7 +20,7 @@ type UnitList []Unit
 
 var units UnitList
 
-func (unit UnitList) writeJSON(w http.ResponseWriter) {
+func (unit UnitList) writeJSON(w io.WriteCloser) {
 	fmt.Fprintf(w, "\"units\": [")
 	separator := ""
 	for i := range unit {
