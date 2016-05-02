@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -16,6 +17,8 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
+
+var mu sync.Mutex
 
 func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -30,6 +33,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	go func() { // send tick warnings to client
 		for {
 			if lastConnTick < lastDataUpdate {
+				mu.Lock()
 				s, err := conn.NextWriter(websocket.TextMessage)
 				if err != nil {
 					log.Println(err)
@@ -50,8 +54,11 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 
 				if err := s.Close(); err != nil {
 					log.Println(err)
+					mu.Unlock()
 					return
 				}
+
+				mu.Unlock()
 
 				lastConnTick = lastDataUpdate
 			} else {
@@ -91,10 +98,13 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			mu.Lock()
 			if err = conn.WriteMessage(websocket.TextMessage, []byte(answer)); err != nil {
 				log.Println(err)
+				mu.Unlock()
 				return
 			}
+			mu.Unlock()
 		} else {
 			m := Message{}
 			json.Unmarshal(message, &m)
