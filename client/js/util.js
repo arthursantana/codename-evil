@@ -17,3 +17,18 @@ function commalizer(x) {
 function capitalize(string) {
    return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+function getMousePos(canvas, event) {
+   var rect = canvas.getBoundingClientRect();
+   return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+   };
+}
+
+function isInCircle(x, y, xC, yC, r) {
+   dx = x-xC;
+   dy = y-yC;
+
+   return (dx*dx + dy*dy < r*r);
+}

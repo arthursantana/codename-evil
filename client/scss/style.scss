@@ -1,9 +1,9 @@
-@import url("https://fonts.googleapis.com/css?family=Orbitron:400,700");
-$font-family: 'Orbitron';
+@import url("https://fonts.googleapis.com/css?family=Questrial:400,700");
+$font-family: 'Questrial';
 
 body {
    font-family: $font-family;
-   background-color: white;
+   background-color: black;
    color: white;
    font-size: 16px;
 }
@@ -18,10 +18,7 @@ body {
 }
 
 #starMap {
-   background-color: #111;
    color: white;
-   box-shadow: 10px 10px 30px #555;
-   border-radius: 5px;
    position: fixed;
    top: 50%;
    left: 50%;

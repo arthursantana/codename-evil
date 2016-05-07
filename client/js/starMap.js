@@ -1,4 +1,6 @@
-var planetScale = 5
+var planetScale = 5;
+var mouseX = 0;
+var mouseY = 0;
 
 var StarMap = React.createClass({
    drawPlanets: function () {
@@ -7,7 +9,7 @@ var StarMap = React.createClass({
 
       var ctx = this.refs.canvas.getContext('2d');
 
-      ctx.font = "bold 10px Orbitron";
+      ctx.font = "bold 10px Questrial";
       ctx.textAlign = "center";
       for (var i = 0; i < this.props.planets.length; i++) {
          var p = this.props.planets[i];
@@ -20,9 +22,11 @@ var StarMap = React.createClass({
             ctx.fillStyle = '#333';
          else
             ctx.fillStyle = this.props.players[p.ownerId].color;
-         ctx.lineWidth = 2;
-         ctx.strokeStyle = '#fff';
-         ctx.stroke();
+         if (isInCircle(mouseX, mouseY, p.position[0], p.position[1], r)) {
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#0f0';
+            ctx.stroke();
+         }
          ctx.fill();
          ctx.fillStyle = "white";
          ctx.fillText(p.name,p.position[0],p.position[1]+r+20);
@@ -35,7 +39,7 @@ var StarMap = React.createClass({
 
       var ctx = this.refs.canvas.getContext('2d');
 
-      ctx.font = "bold 10px Orbitron";
+      ctx.font = "bold 10px Questrial";
       ctx.textAlign = "center";
       for (var i = 0; i < this.props.ships.length; i++) {
          var s = this.props.ships[i];
@@ -47,13 +51,16 @@ var StarMap = React.createClass({
          ctx.beginPath();
          ctx.arc(s.position[0], s.position[1], r, 0, 2*Math.PI, false);
          ctx.fillStyle = this.props.players[s.ownerId].color;
-         ctx.lineWidth = r;
-         ctx.strokeStyle = '#fff';
-         ctx.stroke();
          ctx.fill();
          ctx.fillStyle = "white";
          ctx.fillText(s.type,s.position[0],s.position[1]+r+20);
       }
+   },
+
+   mouseMoveHandler: function (event) {
+      r = getMousePos(this.refs.canvas, event)
+      mouseX = r.x;
+      mouseY = r.y;
    },
 
    clickHandler: function (event) {
@@ -64,11 +71,7 @@ var StarMap = React.createClass({
       for (var i = 0; i < this.props.planets.length; i++) {
          var p = this.props.planets[i];
 
-         dx = x-p.position[0];
-         dy = y-p.position[1];
-         r = planetScale*p.r;
-
-         if (dx*dx + dy*dy < r*r) {
+         if (isInCircle(x, y, p.position[0], p.position[1], planetScale*p.r)) {
             if (this.props.selectedShip == null) {
                hasClickedAnyPlanet = true;
 
@@ -104,7 +107,7 @@ var StarMap = React.createClass({
       if (this.props.planets == null || this.props.players == null)
          return null;
 
-      return <canvas ref="canvas" id="starMap" className={voyageModeClass} width="1300" height="750" onClick={this.clickHandler}></canvas>;
+      return <canvas ref="canvas" id="starMap" className={voyageModeClass} width="1300" height="750" onClick={this.clickHandler} onMouseMove={this.mouseMoveHandler}></canvas>;
    },
 
    componentDidUpdate: function () {
