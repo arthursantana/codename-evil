@@ -2,6 +2,8 @@ var planetScale = 5;
 var mouseX = 0;
 var mouseY = 0;
 
+var selectedPlanets = new Set();
+
 var StarMap = React.createClass({
    drawPlanets: function () {
       if (!this.props.planets || !this.props.players)
@@ -9,7 +11,7 @@ var StarMap = React.createClass({
 
       var ctx = this.refs.canvas.getContext('2d');
 
-      ctx.font = "bold 10px Questrial";
+      ctx.font = "bold 12px Questrial";
       ctx.textAlign = "center";
       for (var i = 0; i < this.props.planets.length; i++) {
          var p = this.props.planets[i];
@@ -19,10 +21,14 @@ var StarMap = React.createClass({
          ctx.beginPath();
          ctx.arc(p.position[0], p.position[1], r, 0, 2*Math.PI, false);
          if (p.ownerId == -1)
-            ctx.fillStyle = '#333';
+            ctx.fillStyle = '#aaa';
          else
             ctx.fillStyle = this.props.players[p.ownerId].color;
          if (isInCircle(mouseX, mouseY, p.position[0], p.position[1], r)) {
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#0f0';
+            ctx.stroke();
+         } else if (selectedPlanets.has(p.id)) {
             ctx.lineWidth = 3;
             ctx.strokeStyle = '#0f0';
             ctx.stroke();
@@ -39,14 +45,14 @@ var StarMap = React.createClass({
 
       var ctx = this.refs.canvas.getContext('2d');
 
-      ctx.font = "bold 10px Questrial";
+      ctx.font = "bold 12px Questrial";
       ctx.textAlign = "center";
       for (var i = 0; i < this.props.ships.length; i++) {
          var s = this.props.ships[i];
          if (s.planetId != -1 || s.ownerId == -1)
             continue;
 
-         var r = 1;
+         var r = 2;
 
          ctx.beginPath();
          ctx.arc(s.position[0], s.position[1], r, 0, 2*Math.PI, false);
@@ -68,6 +74,7 @@ var StarMap = React.createClass({
       y = event.pageY - this.refs.canvas.offsetTop;
 
       hasClickedAnyPlanet = false;
+
       for (var i = 0; i < this.props.planets.length; i++) {
          var p = this.props.planets[i];
 
@@ -75,7 +82,9 @@ var StarMap = React.createClass({
             if (this.props.selectedShip == null) {
                hasClickedAnyPlanet = true;
 
-               this.props.setSelectedPlanet(p);
+               if (selectedPlanets.has(p.id))
+                  this.props.setSelectedPlanet(p);
+               else selectedPlanets.add(p.id);
             } else {
                socket.send(JSON.stringify({
                   command: "setDestination",
@@ -89,6 +98,10 @@ var StarMap = React.createClass({
 
          if (this.props.selectedShip != null)
             this.props.quitSetDestinationMode();
+      }
+
+      if (!hasClickedAnyPlanet) { // de-select
+         selectedPlanets.clear();
       }
    },
 

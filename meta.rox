@@ -49,11 +49,6 @@
    - queue units in multiple planets
    - attack from multiple planets at once
    - multi/auto-load: easy to put your dudes in ships to attack
-      - maybe should be a little manual (planet by planet?): it's fun preparing to attack
-- tidy up visuals pt I
-   - zoom in/out?
-   - background stars
-   - planet effects
 - refactor client
    - client should get costs from server (only one place to change values)
    - break things down: have different functions or components for different building interfaces and etc
@@ -79,11 +74,13 @@
    - ships and units
       - more combat ships and units
       - more support ships and units? scouts/spies, commerce, propagandists, whatever
-- balance: make it fun with varied viable strats
-   - empty squares generate resources?
-   - limit obtanium per planet: promotes non-turtling
    - scale factors: e.g. multiple generators together are more efficient: promotes specialized planets, more varied gameplay
       - implementation idea: upgrades per planet - makes you want to have same type of buildings in a planet
+   - limit obtanium per planet?: promotes non-turtling
+- tidy up visuals pt I
+   - zoom in/out?
+   - background stars
+   - planet effects
 - lobby
    - integrated chat
 - refactor interface: has to be easy to manage all your planets and ships and whatever

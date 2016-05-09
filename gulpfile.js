@@ -18,7 +18,7 @@ gulp.task('css', function () {
 });
 
 gulp.task('img', function () {
-   gulp.src(['art/buildings/*.png', 'art/resources/*.png', 'art/units/*.png'])
+   gulp.src(['art/buildings/*.png', 'art/resources/*.png', 'art/units/*.png', 'art/bg/*.png'])
    .pipe(gulp.dest('dist/static/img'))
 });
 
