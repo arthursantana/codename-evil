@@ -83,7 +83,7 @@ var StarMap = React.createClass({
                hasClickedAnyPlanet = true;
 
                if (selectedPlanets.has(p.id))
-                  this.props.setSelectedPlanet(p);
+                  this.props.openPlanetInterface(selectedPlanets);
                else selectedPlanets.add(p.id);
             } else {
                socket.send(JSON.stringify({

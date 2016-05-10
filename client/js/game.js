@@ -10,20 +10,20 @@ var Game = React.createClass({
          ships: null,
          units: null,
          selectedShip: null,
-         selectedPlanet: null
+         openPlanets: null
       };
    },
 
-   unselectPlanet: function () {
-      this.setState({ selectedPlanet: null });
+   closePlanetInterface: function () {
+      this.setState({ openPlanets: null });
    },
 
-   setSelectedPlanet: function (planet) {
-      this.setState({ selectedPlanet: planet });
+   openPlanetInterface: function (planets) {
+      this.setState({ openPlanets: planets });
    },
 
    enterSetDestinationMode: function (ship) {
-      this.setState({ selectedPlanet: null, selectedShip: ship });
+      this.setState({ openPlanets: null, selectedShip: ship });
    },
    
    quitSetDestinationMode: function () {
@@ -31,10 +31,18 @@ var Game = React.createClass({
    },
 
    render: function () {
+      if (this.state.openPlanets == null)
+         openInterface = null;
+      else if (this.state.openPlanets.size == 1) {
+         var openPlanetIds = [v for (v of this.state.openPlanets.values())];
+         openInterface = <PlanetInterface openPlanet={this.state.planets[openPlanetIds[0]]} players={this.state.players} ships={this.state.ships} units={this.state.units} closePlanetInterface={this.closePlanetInterface} enterSetDestinationMode={this.enterSetDestinationMode} />;
+      } else {
+         openInterface = <MultiPlanetInterface openPlanets={this.state.openPlanets} planets={this.state.planets} players={this.state.players} ships={this.state.ships} units={this.state.units} closePlanetInterface={this.closePlanetInterface} enterSetDestinationMode={this.enterSetDestinationMode} />;
+      }
       return (
          <div>
-            <StarMap planets={this.state.planets} players={this.state.players} ships={this.state.ships} setSelectedPlanet={this.setSelectedPlanet} selectedShip={this.state.selectedShip} quitSetDestinationMode={this.quitSetDestinationMode} />
-            <ManagementInterface planets={this.state.planets} players={this.state.players} ships={this.state.ships} units={this.state.units} selectedPlanet={this.state.selectedPlanet} unselectPlanet={this.unselectPlanet} enterSetDestinationMode={this.enterSetDestinationMode} />
+            <StarMap planets={this.state.planets} players={this.state.players} ships={this.state.ships} openPlanetInterface={this.openPlanetInterface} selectedShip={this.state.selectedShip} quitSetDestinationMode={this.quitSetDestinationMode} />
+            {openInterface}
          </div>
       );
    },
@@ -64,8 +72,6 @@ var Game = React.createClass({
             var answer = JSON.parse(event.data);
 
             if (answer.type == "dataUpdate") {
-               var selectedPlanet = null
-
                if (answer.timestamp > lastUpdateTimestamp) {
                   lastUpdateTimestamp = answer.timestamp;
                } else {
@@ -73,23 +79,11 @@ var Game = React.createClass({
                   return;
                }
 
-               if (self.state.selectedPlanet != null) { // gotta find this planet in the new planet list
-                  var selectedPlanetId = self.state.selectedPlanet.id;
-
-                  for (var i = 0; i < answer.planets.length; i++) {
-                     if (answer.planets[i].id == selectedPlanetId) {
-                        selectedPlanet = answer.planets[i];
-                        break;
-                     }
-                  }
-               }
-
                self.setState({
                   players: answer.players,
                   planets: answer.planets,
                   ships: answer.ships,
-                  units: answer.units,
-                  selectedPlanet: selectedPlanet
+                  units: answer.units
                });
             }
             else { // stores registered userId

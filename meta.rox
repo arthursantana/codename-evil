@@ -45,13 +45,14 @@
       % timestamp tick data; should not update client if timestamp is older then the last one applied
       % client should receive data directly from tick
       % preload images and font
-- necessary interface upgrades: select multiple planets
+
+=== later
+- necessary interface upgrades
+   - select multiple planets
    - queue units in multiple planets
    - attack from multiple planets at once
    - multi/auto-load: easy to put your dudes in ships to attack
-- refactor client
-   - client should get costs from server (only one place to change values)
-   - break things down: have different functions or components for different building interfaces and etc
+   - make it impossible to select planets you don't own: what happens if planets change hands?
 - refactor server
    - modularize commands: handleWebsocket should only talk about network, call methods to do the work
    - horrible long names in variables in handleWebsockets: create shortcuts
@@ -81,6 +82,9 @@
    - zoom in/out?
    - background stars
    - planet effects
+- refactor client
+   - client should get costs from server (only one place to change values)
+   - break things down: have different functions or components for different building interfaces and etc
 - lobby
    - integrated chat
 - refactor interface: has to be easy to manage all your planets and ships and whatever
