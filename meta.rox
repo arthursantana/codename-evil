@@ -48,7 +48,7 @@
 
 === later
 - necessary interface upgrades
-   - select multiple planets
+   % select multiple planets
    - queue units in multiple planets
    - attack from multiple planets at once
    - multi/auto-load: easy to put your dudes in ships to attack

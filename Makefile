@@ -20,6 +20,9 @@ init:
 run:
 	cd dist; ./evil ${ARGS}; cd ..
 
+test:
+	cd dist; ./evil -tickPeriod 100; cd..
+
 watch:
 	node node_modules/gulp/bin/gulp.js watch
 
