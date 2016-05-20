@@ -53,6 +53,10 @@
    - attack from multiple planets at once
    - multi/auto-load: easy to put your dudes in ships to attack
    - make it impossible to select planets you don't own: what happens if planets change hands?
+- little icons that show up on planets
+   - when an unit/building is done
+   - when units land
+   - when battle is occurring
 - refactor server
    - modularize commands: handleWebsocket should only talk about network, call methods to do the work
    - horrible long names in variables in handleWebsockets: create shortcuts

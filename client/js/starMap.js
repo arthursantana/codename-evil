@@ -82,9 +82,18 @@ var StarMap = React.createClass({
             if (this.props.selectedShip == null) {
                hasClickedAnyPlanet = true;
 
-               if (selectedPlanets.has(p.id))
-                  this.props.openPlanetInterface(selectedPlanets);
-               else selectedPlanets.add(p.id);
+               if (event.ctrlKey) {
+                  if (selectedPlanets.has(p.id))
+                     this.props.openPlanetInterface(selectedPlanets);
+                  else
+                     selectedPlanets.add(p.id);
+               } else {
+                  var set = new Set();
+                  selectedPlanets.clear();
+                  set.clear();
+                  set.add(p.id);
+                  this.props.openPlanetInterface(set);
+               }
             } else {
                socket.send(JSON.stringify({
                   command: "setDestination",
@@ -100,7 +109,7 @@ var StarMap = React.createClass({
             this.props.quitSetDestinationMode();
       }
 
-      if (!hasClickedAnyPlanet) { // de-select
+      if (!hasClickedAnyPlanet && !event.ctrlKey) { // de-select
          selectedPlanets.clear();
       }
    },
