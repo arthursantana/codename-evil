@@ -1,6 +1,6 @@
 var MultiPlanetInterface = React.createClass({
    render: function () {
-      var openPlanetIds = [v for (v of this.props.openPlanets.values())];
+      var openPlanetIds = [...this.props.openPlanets];
 
       return (
          <div>
@@ -18,7 +18,7 @@ var MultiPlanetInterface = React.createClass({
 
    componentDidUpdate: function () {
       var pC = document.getElementById('playerColor');
-      var openPlanetIds = [v for (v of this.props.openPlanets.values())];
+      var openPlanetIds = [...this.props.openPlanets.values()];
 
       if (pC != null) {
          console.log(this.props.players[this.props.planets[openPlanetIds[0]].ownerId].color);

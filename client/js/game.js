@@ -34,7 +34,9 @@ var Game = React.createClass({
       if (this.state.openPlanets == null)
          openInterface = null;
       else if (this.state.openPlanets.size == 1) {
-         var openPlanetIds = [v for (v of this.state.openPlanets.values())];
+         //var openPlanetIds = [v for (v of this.state.openPlanets.values())];
+         var openPlanetIds = [...this.state.openPlanets.values()];
+
          openInterface = <PlanetInterface openPlanet={this.state.planets[openPlanetIds[0]]} players={this.state.players} ships={this.state.ships} units={this.state.units} closePlanetInterface={this.closePlanetInterface} enterSetDestinationMode={this.enterSetDestinationMode} />;
       } else {
          openInterface = <MultiPlanetInterface openPlanets={this.state.openPlanets} planets={this.state.planets} players={this.state.players} ships={this.state.ships} units={this.state.units} closePlanetInterface={this.closePlanetInterface} enterSetDestinationMode={this.enterSetDestinationMode} />;
